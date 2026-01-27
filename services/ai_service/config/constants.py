@@ -1,0 +1,3 @@
+GEMINI_LLM_MODEL = "gemini-2.0-flash-001"
+GEMINI_EMBEDDING_MODEL = "text-embedding-004"
+FITNESS_FINE_TUNED_MODEL_ENDPOINT = "projects/749964734581/locations/us-central1/endpoints/839548596062781440"
