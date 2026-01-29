@@ -1031,9 +1031,15 @@ Allergies: {allergies}
 
 Health Goals: {health_goals}
 
+Current Weight: {current_weight}
+
+Loosing weight rate: {loosing_weight_rate}
+
 Target Weight: {target_weight}
 
 Location: {location}
+
+Alerts: {alerts}
 
 Onboarding Data:
 
@@ -1063,6 +1069,9 @@ Generate a complete 3-day nutrition plan that includes:
 - Respect all dietary restrictions and allergies
 - Align caloric intake with BMR and health goals (weight loss/maintenance/gain)
 - Prioritize nutrients critical for current menstrual phase or pregnancy trimester
+- Alerts are triggered when a user logs food that negatively impacts their health. When alerts are present, 
+they must be taken into account while generating the meal plan.
+
 """
 
 # TODO: This is just a placeholder, need to refine it later
@@ -1101,6 +1110,7 @@ Your task:
 5. If multiple values are shown (per 100g and per serving), prefer **per serving**.
 6. If any value is missing or unclear, estimate conservatively using common packaged food standards.
 7. Do NOT guess exotic or unrealistic numbers.
+8. If multiple food items are detected in the image,  provide clear reasoning for why each item is included or excluded.
 
 Focus on extracting the following nutrition values:
 - Calories (kcal)
@@ -1129,7 +1139,8 @@ For each food item detected, estimate the following nutritional values:
 - protein (grams)
 - fats (grams)
 
-If portion sizes are unclear, assume a realistic human serving.
+If portion sizes are unclear, assume a realistic human serving. If multiple food items are detected in the image, 
+provide clear reasoning for why each item is included or excluded.
 
 Respond strictly in JSON.
 """
