@@ -83,8 +83,11 @@ class NutritionInputs(BaseModel):
     food_prefs: Optional[str] = None
     allergies: Optional[str] = None
     health_goals: Optional[str] = None
+    current_weight: Optional[str] = None
+    loosing_weight_rate: Optional[str] = None
     target_weight: Optional[float] = None
     location: Optional[str] = None
+    alerts: List[str] = []
 
 class NutritionTipInputs(BaseModel):
     health_analysis: str
