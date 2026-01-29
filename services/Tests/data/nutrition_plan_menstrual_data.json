@@ -1,0 +1,36 @@
+{
+  "direct_inputs": {
+    "onboarding_data": {
+       "responses": [
+        { "question_code": "gen_user_name", "answer": "New Khan" },
+        { "question_code": "gen_user_birth_date", "answer": "769392000" },
+        { "question_code": "gen_module_selection", "answer": ["Period Tracking", "Fitness"] },
+        { "question_code": "gen_weight", "answer": "63 kgs" },
+        { "question_code": "gen_height", "answer": "5.9 ft" },
+        { "question_code": "pt_cycle_length", "answer": "27" },
+        { "question_code": "pt_period_start_date", "answer": "1746403200" },
+        { "question_code": "pt_period_duration", "answer": "5" },
+        { "question_code": "gen_health_issues", "answer": ["Anemia", "Diabetes"] },
+        { "question_code": "fit_goal", "answer": ["Build muscle", "Improve stamina"] }
+      ],
+      "more_about_user": "This is for testing purpose."
+    },
+"menstrual_data": {
+    "date": 1749772800,
+    "flow_level": "Light",
+    "symptoms": ["Nipple Discharge", "Back Pain"],
+    "moods": ["Happy"],
+    "gastrointestinal_symptoms": ["Vomiting", "Abdominal Pain"],
+    "vaginal_discharges": ["egg white"],
+    "supplements": ["Iron", "Vitamin A"],
+    "custom_supplements": ["Omega-3 Fatty Acids", "Turmeric"]
+  },
+      "bmi": 22.5,
+      "bmr": 1450,
+      "country": "Pakistan",
+      "food_prefs": "Vegetarian",
+      "allergies": "Peanuts",
+      "health_goals": "Build muscle and improve stamina",
+      "target_weight": 60
+  }
+}

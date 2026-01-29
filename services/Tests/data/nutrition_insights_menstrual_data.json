@@ -1,0 +1,421 @@
+{
+  "log_input": {
+    "food_name": "Chicken Karahi"
+  },
+  "target_weight": 54,
+  "current_weight": 60,
+  "loosing_weight_rate": 0.2,
+  "health_analysis": "The combination of frequent urination and vomiting is a major concern because it can cause dehydration. The user should contact her healthcare provider to discuss these symptoms. Based on the information provided, the user is in the first trimester, specifically week 6 of pregnancy. A pattern of early pregnancy discomforts is evident. The user reports a cluster of symptoms including cramping, bloating, back pain, headaches, breast tenderness, and frequent urination. Gastrointestinal symptoms such as nausea and vomiting are also present. Fatigue, insomnia, and shortness of breath are reported. The combination of frequent urination and vomiting raises concern for dehydration. Breast symptoms include tenderness, swelling, and lumpiness. Swelling in extremities and facial puffiness are also reported.",
+  "meal_plan": {
+  "plan_type": "vegetarian",
+  "plan_template": "Plan Modifier: Vegetarian (applies to any base plan)\nRestriction: No meat, poultry, fish (may include eggs and dairy if lacto-ovo)\nProtein Sources: Legumes (beans, lentils), tofu, tempeh, eggs, dairy, Greek yogurt, cottage cheese, quinoa\nCritical Nutrients: B12 (fortified foods or supplement), Iron (with Vitamin C), Zinc, Omega-3 (flax, chia, walnuts)\nInclude: Variety of plant proteins, iron-rich plants + citrus, nuts, seeds\nStrategy: Combine incomplete proteins (rice + beans), fortified plant milks",
+  "cycle_phase_or_trimester": null,
+  "three_day_plan": [
+    {
+      "day": 1,
+      "focus": "Iron-rich meals",
+      "meals": {
+        "breakfast": {
+          "name": "Spinach and Feta Omelette with Whole Wheat Toast",
+          "recipe": {
+            "ingredients": [
+              {
+                "item": "Eggs",
+                "quantity": "2"
+              },
+              {
+                "item": "Spinach",
+                "quantity": "1 cup"
+              },
+              {
+                "item": "Feta cheese",
+                "quantity": "1/4 cup"
+              },
+              {
+                "item": "Whole wheat toast",
+                "quantity": "2 slices"
+              },
+              {
+                "item": "Olive oil",
+                "quantity": "1 tsp"
+              }
+            ],
+            "instructions": [
+              "Heat olive oil in a pan.",
+              "Sauté spinach until wilted.",
+              "Whisk eggs and pour over spinach.",
+              "Sprinkle feta cheese.",
+              "Cook until set.",
+              "Serve with whole wheat toast."
+            ]
+          },
+          "nutrition": {
+            "calories": 350,
+            "protein_g": 20,
+            "carbs_g": 25,
+            "fats_g": 20
+          }
+        },
+        "lunch": {
+          "name": "Lentil Soup with Lemon and Whole Grain Bread",
+          "recipe": {
+            "ingredients": [
+              {
+                "item": "Lentils",
+                "quantity": "1 cup"
+              },
+              {
+                "item": "Vegetable broth",
+                "quantity": "4 cups"
+              },
+              {
+                "item": "Carrot",
+                "quantity": "1/2 cup, diced"
+              },
+              {
+                "item": "Celery",
+                "quantity": "1/2 cup, diced"
+              },
+              {
+                "item": "Onion",
+                "quantity": "1/4 cup, diced"
+              },
+              {
+                "item": "Lemon juice",
+                "quantity": "1 tbsp"
+              },
+              {
+                "item": "Whole grain bread",
+                "quantity": "1 slice"
+              }
+            ],
+            "instructions": [
+              "Sauté carrot, celery, and onion in a pot.",
+              "Add lentils and vegetable broth.",
+              "Bring to a boil, then simmer until lentils are tender.",
+              "Stir in lemon juice.",
+              "Serve with whole grain bread."
+            ]
+          },
+          "nutrition": {
+            "calories": 400,
+            "protein_g": 25,
+            "carbs_g": 50,
+            "fats_g": 10
+          }
+        },
+        "dinner": {
+          "name": "Tofu Stir-Fry with Brown Rice and Broccoli",
+          "recipe": {
+            "ingredients": [
+              {
+                "item": "Tofu",
+                "quantity": "4 oz, cubed"
+              },
+              {
+                "item": "Broccoli florets",
+                "quantity": "1 cup"
+              },
+              {
+                "item": "Soy sauce",
+                "quantity": "2 tbsp"
+              },
+              {
+                "item": "Ginger",
+                "quantity": "1 tsp, grated"
+              },
+              {
+                "item": "Garlic",
+                "quantity": "1 clove, minced"
+              },
+              {
+                "item": "Brown rice",
+                "quantity": "1 cup, cooked"
+              },
+              {
+                "item": "Sesame oil",
+                "quantity": "1 tsp"
+              }
+            ],
+            "instructions": [
+              "Heat sesame oil in a pan.",
+              "Stir-fry tofu until golden brown.",
+              "Add broccoli, ginger, and garlic.",
+              "Cook until broccoli is tender-crisp.",
+              "Stir in soy sauce.",
+              "Serve over brown rice."
+            ]
+          },
+          "nutrition": {
+            "calories": 450,
+            "protein_g": 30,
+            "carbs_g": 45,
+            "fats_g": 15
+          }
+        }
+      }
+    },
+    {
+      "day": 2,
+      "focus": "Omega-3 Fatty Acids",
+      "meals": {
+        "breakfast": {
+          "name": "Chia Seed Pudding with Berries and Almonds",
+          "recipe": {
+            "ingredients": [
+              {
+                "item": "Chia seeds",
+                "quantity": "2 tbsp"
+              },
+              {
+                "item": "Almond milk",
+                "quantity": "1 cup"
+              },
+              {
+                "item": "Mixed berries",
+                "quantity": "1/2 cup"
+              },
+              {
+                "item": "Almonds",
+                "quantity": "1/4 cup"
+              },
+              {
+                "item": "Maple syrup",
+                "quantity": "1 tbsp"
+              }
+            ],
+            "instructions": [
+              "Combine chia seeds and almond milk in a jar.",
+              "Stir well and refrigerate overnight.",
+              "Top with mixed berries and almonds before serving.",
+              "Drizzle with maple syrup."
+            ]
+          },
+          "nutrition": {
+            "calories": 300,
+            "protein_g": 10,
+            "carbs_g": 30,
+            "fats_g": 15
+          }
+        },
+        "lunch": {
+          "name": "Quinoa Salad with Chickpeas, Walnuts and Lemon Vinaigrette",
+          "recipe": {
+            "ingredients": [
+              {
+                "item": "Quinoa",
+                "quantity": "1 cup, cooked"
+              },
+              {
+                "item": "Chickpeas",
+                "quantity": "1/2 cup"
+              },
+              {
+                "item": "Walnuts",
+                "quantity": "1/4 cup"
+              },
+              {
+                "item": "Cucumber",
+                "quantity": "1/2 cup, diced"
+              },
+              {
+                "item": "Tomato",
+                "quantity": "1/2 cup, diced"
+              },
+              {
+                "item": "Lemon juice",
+                "quantity": "2 tbsp"
+              },
+              {
+                "item": "Olive oil",
+                "quantity": "1 tbsp"
+              }
+            ],
+            "instructions": [
+              "Combine cooked quinoa, chickpeas, walnuts, cucumber, and tomato in a bowl.",
+              "Whisk lemon juice and olive oil for the vinaigrette.",
+              "Pour vinaigrette over the salad and toss."
+            ]
+          },
+          "nutrition": {
+            "calories": 420,
+            "protein_g": 18,
+            "carbs_g": 50,
+            "fats_g": 18
+          }
+        },
+        "dinner": {
+          "name": "Vegetarian Chili with Cornbread",
+          "recipe": {
+            "ingredients": [
+              {
+                "item": "Kidney beans",
+                "quantity": "1 cup"
+              },
+              {
+                "item": "Black beans",
+                "quantity": "1 cup"
+              },
+              {
+                "item": "Diced tomatoes",
+                "quantity": "1 can"
+              },
+              {
+                "item": "Corn",
+                "quantity": "1/2 cup"
+              },
+              {
+                "item": "Onion",
+                "quantity": "1/2 cup, diced"
+              },
+              {
+                "item": "Chili powder",
+                "quantity": "2 tbsp"
+              },
+              {
+                "item": "Cornbread",
+                "quantity": "1 slice"
+              }
+            ],
+            "instructions": [
+              "Sauté onion in a pot.",
+              "Add kidney beans, black beans, diced tomatoes, corn, and chili powder.",
+              "Simmer for 20 minutes.",
+              "Serve with cornbread."
+            ]
+          },
+          "nutrition": {
+            "calories": 480,
+            "protein_g": 22,
+            "carbs_g": 60,
+            "fats_g": 12
+          }
+        }
+      }
+    },
+    {
+      "day": 3,
+      "focus": "Zinc and B12 Fortification",
+      "meals": {
+        "breakfast": {
+          "name": "Fortified Cereal with Milk and Banana",
+          "recipe": {
+            "ingredients": [
+              {
+                "item": "Fortified cereal (B12)",
+                "quantity": "1 cup"
+              },
+              {
+                "item": "Milk (fortified)",
+                "quantity": "1 cup"
+              },
+              {
+                "item": "Banana",
+                "quantity": "1"
+              }
+            ],
+            "instructions": [
+              "Pour cereal into a bowl.",
+              "Add milk.",
+              "Slice banana and add to the bowl."
+            ]
+          },
+          "nutrition": {
+            "calories": 320,
+            "protein_g": 12,
+            "carbs_g": 55,
+            "fats_g": 5
+          }
+        },
+        "lunch": {
+          "name": "Egg Salad Sandwich on Whole Grain Bread with Bell Peppers",
+          "recipe": {
+            "ingredients": [
+              {
+                "item": "Eggs",
+                "quantity": "2, hard-boiled"
+              },
+              {
+                "item": "Mayonnaise",
+                "quantity": "2 tbsp"
+              },
+              {
+                "item": "Celery",
+                "quantity": "1/4 cup, diced"
+              },
+              {
+                "item": "Whole grain bread",
+                "quantity": "2 slices"
+              },
+              {
+                "item": "Bell pepper",
+                "quantity": "1/2, sliced"
+              }
+            ],
+            "instructions": [
+              "Mash hard-boiled eggs in a bowl.",
+              "Add mayonnaise and celery.",
+              "Mix well.",
+              "Spread egg salad on whole grain bread.",
+              "Serve with sliced bell pepper."
+            ]
+          },
+          "nutrition": {
+            "calories": 400,
+            "protein_g": 18,
+            "carbs_g": 35,
+            "fats_g": 22
+          }
+        },
+        "dinner": {
+          "name": "Mushroom and Spinach Pasta with Parmesan Cheese",
+          "recipe": {
+            "ingredients": [
+              {
+                "item": "Pasta",
+                "quantity": "1 cup, cooked"
+              },
+              {
+                "item": "Mushrooms",
+                "quantity": "1 cup, sliced"
+              },
+              {
+                "item": "Spinach",
+                "quantity": "2 cups"
+              },
+              {
+                "item": "Garlic",
+                "quantity": "2 cloves, minced"
+              },
+              {
+                "item": "Olive oil",
+                "quantity": "1 tbsp"
+              },
+              {
+                "item": "Parmesan cheese",
+                "quantity": "2 tbsp, grated"
+              }
+            ],
+            "instructions": [
+              "Cook pasta according to package directions.",
+              "Heat olive oil in a pan.",
+              "Sauté garlic and mushrooms until tender.",
+              "Add spinach and cook until wilted.",
+              "Toss with cooked pasta.",
+              "Sprinkle with Parmesan cheese."
+            ]
+          },
+          "nutrition": {
+            "calories": 450,
+            "protein_g": 20,
+            "carbs_g": 55,
+            "fats_g": 15
+          }
+        }
+      }
+    }
+  ],
+  "reasoning": "This vegetarian meal plan provides a balanced intake of protein, carbohydrates, and fats while focusing on critical nutrients like B12, iron, zinc, and omega-3 fatty acids. The plan incorporates a variety of plant-based protein sources and emphasizes iron-rich foods paired with vitamin C to enhance absorption. It also includes foods fortified with B12 to address potential deficiencies in a vegetarian diet. The sample user data is minimal, so this plan is a general template."
+},
+  "current_nutrients": {}
+}

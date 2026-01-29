@@ -1,0 +1,495 @@
+[
+  {
+    "log_input": { "food_name": "Test Food 1" },
+    "target_weight": 54.0,
+    "current_weight": 60.0,
+    "loosing_weight_rate": 0.2,
+    "health_analysis": "The combination of frequent urination and vomiting is a major concern because it can cause dehydration. The user should contact her healthcare provider to discuss these symptoms. Based on the information provided, the user is in the first trimester, specifically week 6 of pregnancy. A pattern of early pregnancy discomforts is evident. The user reports a cluster of symptoms including cramping, bloating, back pain, headaches, breast tenderness, and frequent urination. Gastrointestinal symptoms such as nausea and vomiting are also present. Fatigue, insomnia, and shortness of breath are reported. The combination of frequent urination and vomiting raises concern for dehydration. Breast symptoms include tenderness, swelling, and lumpiness. Swelling in extremities and facial puffiness are also reported.",
+    "meal_plan": {
+      "plan_type": "standard_balanced",
+      "plan_template": "Plan: Standard Balanced Plan\n    Goal: Maintain weight with balanced nutrition\n    Calories: Maintenance level (BMR × activity factor)\n    Macros: 30% protein, 40% carbs, 30% fats\n    Focus: General health, variety of whole foods, balanced meals\n    Principles: Include all food groups, colorful vegetables, whole grains, lean proteins, healthy fats",
+      "cycle_phase_or_trimester": "Late Luteal Phase",
+    "four_day_plan": [
+      {
+        "day": 1,
+        "date": "2025-07-15",
+        "focus": "Iron and Energy Boosting",
+        "meals": {
+          "breakfast": {
+            "name": "Spinach and Paneer Scramble",
+            "recipe": {
+              "ingredients": [
+                {
+                  "item": "Paneer",
+                  "quantity": "100g"
+                },
+                {
+                  "item": "Spinach",
+                  "quantity": "1 cup"
+                },
+                {
+                  "item": "Onion",
+                  "quantity": "1/4 cup"
+                },
+                {
+                  "item": "Tomato",
+                  "quantity": "1/2 medium"
+                },
+                {
+                  "item": "Eggs",
+                  "quantity": "2 large"
+                },
+                {
+                  "item": "Turmeric powder",
+                  "quantity": "1/4 tsp"
+                },
+                {
+                  "item": "Salt",
+                  "quantity": "to taste"
+                },
+                {
+                  "item": "Black pepper",
+                  "quantity": "to taste"
+                },
+                {
+                  "item": "Olive oil",
+                  "quantity": "1 tsp"
+                }
+              ],
+              "instructions": [
+                "Heat olive oil in a pan.",
+                "Add chopped onions and saute until translucent.",
+                "Add chopped tomatoes and cook until soft.",
+                "Add spinach and paneer, cook for 2-3 minutes.",
+                "Whisk eggs with turmeric, salt, and pepper. Pour over the spinach and paneer mixture.",
+                "Scramble until eggs are cooked through."
+              ],
+              "prep_time": "10",
+              "cook_time": "10"
+            },
+            "nutrition": {
+              "calories": 350,
+              "protein_g": 25,
+              "carbs_g": 15,
+              "fats_g": 20,
+              "fiber_g": 5,
+              "iron_mg": 4,
+              "calcium_mg": 200,
+              "vitamin_c_mg": 15,
+              "folate_mcg": 80
+            }
+          },
+          "lunch": {
+            "name": "Lentil Soup with Brown Rice",
+            "recipe": {
+              "ingredients": [
+                {
+                  "item": "Red lentils",
+                  "quantity": "1 cup"
+                },
+                {
+                  "item": "Vegetable broth",
+                  "quantity": "4 cups"
+                },
+                {
+                  "item": "Carrot",
+                  "quantity": "1/2 cup chopped"
+                },
+                {
+                  "item": "Celery",
+                  "quantity": "1/2 cup chopped"
+                },
+                {
+                  "item": "Onion",
+                  "quantity": "1/2 cup chopped"
+                },
+                {
+                  "item": "Garlic",
+                  "quantity": "2 cloves minced"
+                },
+                {
+                  "item": "Turmeric",
+                  "quantity": "1/2 tsp"
+                },
+                {
+                  "item": "Cumin",
+                  "quantity": "1/2 tsp"
+                },
+                {
+                  "item": "Lemon juice",
+                  "quantity": "1 tbsp"
+                },
+                {
+                  "item": "Brown rice",
+                  "quantity": "1 cup cooked"
+                }
+              ],
+              "instructions": [
+                "Rinse lentils thoroughly.",
+                "In a pot, combine lentils, vegetable broth, carrot, celery, onion, garlic, turmeric, and cumin.",
+                "Bring to a boil, then reduce heat and simmer for 20-25 minutes, or until lentils are tender.",
+                "Stir in lemon juice.",
+                "Serve over cooked brown rice."
+              ],
+              "prep_time": "15",
+              "cook_time": "25"
+            },
+            "nutrition": {
+              "calories": 450,
+              "protein_g": 22,
+              "carbs_g": 70,
+              "fats_g": 5,
+              "fiber_g": 15,
+              "iron_mg": 6,
+              "calcium_mg": 80,
+              "vitamin_c_mg": 10,
+              "folate_mcg": 150
+            }
+          },
+          "dinner": {
+            "name": "Vegetable Biryani",
+            "recipe": {
+              "ingredients": [
+                {
+                  "item": "Basmati rice",
+                  "quantity": "1.5 cups"
+                },
+                {
+                  "item": "Mixed vegetables (carrots, peas, beans, potatoes)",
+                  "quantity": "2 cups"
+                },
+                {
+                  "item": "Onion",
+                  "quantity": "1 medium"
+                },
+                {
+                  "item": "Ginger-garlic paste",
+                  "quantity": "1 tbsp"
+                },
+                {
+                  "item": "Biryani masala",
+                  "quantity": "2 tbsp"
+                },
+                {
+                  "item": "Mint leaves",
+                  "quantity": "1/4 cup"
+                },
+                {
+                  "item": "Cilantro",
+                  "quantity": "1/4 cup"
+                },
+                {
+                  "item": "Ghee/Oil",
+                  "quantity": "2 tbsp"
+                }
+              ],
+              "instructions": [
+                "Soak basmati rice for 30 minutes.",
+                "Heat ghee/oil in a pot. Add sliced onions and saute until golden brown.",
+                "Add ginger-garlic paste and saute for a minute.",
+                "Add mixed vegetables and biryani masala. Cook for 5-7 minutes.",
+                "Add soaked rice and water (double the amount of rice). Bring to a boil, then reduce heat and simmer until rice is cooked.",
+                "Garnish with mint and cilantro leaves."
+              ],
+              "prep_time": "20",
+              "cook_time": "35"
+            },
+            "nutrition": {
+              "calories": 550,
+              "protein_g": 15,
+              "carbs_g": 85,
+              "fats_g": 15,
+              "fiber_g": 8,
+              "iron_mg": 3,
+              "calcium_mg": 70,
+              "vitamin_c_mg": 20,
+              "folate_mcg": 100
+            }
+          },
+          "snacks": {
+            "name": "Dates and Almonds",
+            "recipe": {
+              "ingredients": [
+                {
+                  "item": "Dates",
+                  "quantity": "3"
+                },
+                {
+                  "item": "Almonds",
+                  "quantity": "1/4 cup"
+                }
+              ],
+              "instructions": [
+                "Combine dates and almonds.",
+                "Enjoy!"
+              ],
+              "prep_time": "2",
+              "cook_time": "0"
+            },
+            "nutrition": {
+              "calories": 200,
+              "protein_g": 5,
+              "carbs_g": 30,
+              "fats_g": 8,
+              "fiber_g": 5,
+              "iron_mg": 1,
+              "calcium_mg": 30,
+              "vitamin_c_mg": 0,
+              "folate_mcg": 10
+            }
+          }
+        },
+        "daily_totals": {
+          "calories": 1550,
+          "protein_g": 67,
+          "carbs_g": 200,
+          "fats_g": 48,
+          "fiber_g": 33,
+          "iron_mg": 14,
+          "calcium_mg": 380,
+          "vitamin_c_mg": 45,
+          "folate_mcg": 340
+        }
+      },
+      {
+        "day": 2,
+        "date": "2025-07-16",
+        "focus": "Calcium and Mood Boosting",
+        "meals": {
+          "breakfast": {
+            "name": "Oatmeal with Berries and Chia Seeds",
+            "recipe": {
+              "ingredients": [
+                {
+                  "item": "Oats",
+                  "quantity": "1/2 cup"
+                },
+                {
+                  "item": "Milk (dairy or almond)",
+                  "quantity": "1 cup"
+                },
+                {
+                  "item": "Mixed berries",
+                  "quantity": "1/2 cup"
+                },
+                {
+                  "item": "Chia seeds",
+                  "quantity": "1 tbsp"
+                },
+                {
+                  "item": "Honey",
+                  "quantity": "1 tsp"
+                }
+              ],
+              "instructions": [
+                "Combine oats and milk in a saucepan.",
+                "Bring to a boil, then reduce heat and simmer for 5-7 minutes, or until oats are cooked.",
+                "Top with mixed berries, chia seeds, and honey."
+              ],
+              "prep_time": "5",
+              "cook_time": "7"
+            },
+            "nutrition": {
+              "calories": 300,
+              "protein_g": 10,
+              "carbs_g": 50,
+              "fats_g": 7,
+              "fiber_g": 8,
+              "iron_mg": 2,
+              "calcium_mg": 150,
+              "vitamin_c_mg": 25,
+              "folate_mcg": 50
+            }
+          },
+          "lunch": {
+            "name": "Palak Paneer with Roti",
+            "recipe": {
+              "ingredients": [
+                {
+                  "item": "Paneer",
+                  "quantity": "150g"
+                },
+                {
+                  "item": "Spinach",
+                  "quantity": "2 cups"
+                },
+                {
+                  "item": "Onion",
+                  "quantity": "1 medium"
+                },
+                {
+                  "item": "Garlic",
+                  "quantity": "2 cloves"
+                },
+                {
+                  "item": "Ginger",
+                  "quantity": "1 inch"
+                },
+                {
+                  "item": "Garam masala",
+                  "quantity": "1 tsp"
+                },
+                {
+                  "item": "Roti",
+                  "quantity": "2"
+                }
+              ],
+              "instructions": [
+                "Blanch spinach and puree it.",
+                "Saute onions, garlic, and ginger until golden brown.",
+                "Add spinach puree and garam masala. Cook for 5 minutes.",
+                "Add paneer and simmer for another 5 minutes.",
+                "Serve with roti."
+              ],
+              "prep_time": "20",
+              "cook_time": "25"
+            },
+            "nutrition": {
+              "calories": 500,
+              "protein_g": 25,
+              "carbs_g": 55,
+              "fats_g": 20,
+              "fiber_g": 10,
+              "iron_mg": 5,
+              "calcium_mg": 250,
+              "vitamin_c_mg": 30,
+              "folate_mcg": 120
+            }
+          },
+          "dinner": {
+            "name": "Chickpea Curry with Quinoa",
+            "recipe": {
+              "ingredients": [
+                {
+                  "item": "Chickpeas",
+                  "quantity": "1.5 cups"
+                },
+                {
+                  "item": "Tomato puree",
+                  "quantity": "1 cup"
+                },
+                {
+                  "item": "Onion",
+                  "quantity": "1 medium"
+                },
+                {
+                  "item": "Ginger-garlic paste",
+                  "quantity": "1 tbsp"
+                },
+                {
+                  "item": "Garam masala",
+                  "quantity": "1 tsp"
+                },
+                {
+                  "item": "Quinoa",
+                  "quantity": "1 cup"
+                }
+              ],
+              "instructions": [
+                "Saute onions, ginger and garlic until golden brown.",
+                "Add tomato puree and cook until oil separates.",
+                "Add chickpeas and garam masala. Simmer for 15 minutes.",
+                "Serve with cooked quinoa."
+              ],
+              "prep_time": "15",
+              "cook_time": "30"
+            },
+            "nutrition": {
+              "calories": 500,
+              "protein_g": 20,
+              "carbs_g": 70,
+              "fats_g": 10,
+              "fiber_g": 15,
+              "iron_mg": 4,
+              "calcium_mg": 100,
+              "vitamin_c_mg": 15,
+              "folate_mcg": 100
+            }
+          },
+          "snacks": {
+            "name": "Yogurt with Flaxseeds",
+            "recipe": {
+              "ingredients": [
+                {
+                  "item": "Plain yogurt",
+                  "quantity": "1 cup"
+                },
+                {
+                  "item": "Flaxseeds",
+                  "quantity": "1 tbsp"
+                }
+              ],
+              "instructions": [
+                "Combine yogurt and flaxseeds.",
+                "Enjoy!"
+              ],
+              "prep_time": "1",
+              "cook_time": "0"
+            },
+            "nutrition": {
+              "calories": 150,
+              "protein_g": 10,
+              "carbs_g": 10,
+              "fats_g": 7,
+              "fiber_g": 5,
+              "iron_mg": 1,
+              "calcium_mg": 150,
+              "vitamin_c_mg": 0,
+              "folate_mcg": 20
+            }
+          }
+        },
+        "daily_totals": {
+          "calories": 1450,
+          "protein_g": 65,
+          "carbs_g": 185,
+          "fats_g": 44,
+          "fiber_g": 38,
+          "iron_mg": 12,
+          "calcium_mg": 700,
+          "vitamin_c_mg": 70,
+          "folate_mcg": 290
+        }
+      }
+        ],
+  "supplement_recommendations": [
+    {
+      "supplement": "Iron",
+      "dosage": "30-60mg",
+      "timing": "With Vitamin C, away from meals",
+      "reason": "To address anemia and replenish iron stores, especially during menstruation."
+    },
+    {
+      "supplement": "Omega-3 Fatty Acids",
+      "dosage": "1000mg",
+      "timing": "With a meal",
+      "reason": "To reduce inflammation and potentially alleviate mood swings."
+    }
+  ],
+  "focus_nutrients": [
+    {
+      "nutrient": "Iron",
+      "daily_target": "18mg",
+      "importance": "Critical for energy levels and preventing/treating anemia, especially with heavy menstrual flow.",
+      "primary_sources": [
+        "Spinach",
+        "Lentils",
+        "Chickpeas"
+      ]
+    },
+    {
+      "nutrient": "Calcium",
+      "daily_target": "1000mg",
+      "importance": "Important for bone health and nerve function. Adequate intake helps mitigate PMS symptoms.",
+      "primary_sources": [
+        "Paneer",
+        "Yogurt",
+        "Fortified Plant Milks"
+      ]
+    }
+  ],
+  "reasoning": "This 4-day plan is tailored to address the user's anemia, potential PMS symptoms, and diabetes while building muscle and improving stamina. It focuses on iron-rich foods to combat anemia, includes calcium-rich foods for overall health, and manages blood sugar levels with balanced meals and complex carbohydrates. The plan also incorporates protein-rich vegetarian options to support muscle building, aligning with the user's fitness goals."
+},
+  "current_nutrients": {}
+  }
+]
