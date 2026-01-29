@@ -61,11 +61,9 @@ htmlcov/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
-/services/Tests/*
-
 # But keep the data folder
+/services/Tests/*
 !/services/Tests/data/
-/services/Tests/data/**
 
 # =========================
 # Editor backups
