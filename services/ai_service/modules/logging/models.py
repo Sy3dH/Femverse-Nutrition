@@ -14,6 +14,7 @@ class FoodItem(BaseModel):
 
 class ImageFoodLogOutput(BaseModel):
     foods: List[FoodItem]
+    reasoning: str
 
 
 class TextFoodLogInput(BaseModel):
@@ -21,12 +22,12 @@ class TextFoodLogInput(BaseModel):
 
 class InsightsInputs(BaseModel):
     log_input: TextFoodLogInput
+    current_nutrients: Optional[Dict[str, Any]] = None
     target_weight: Optional[float] = None
     current_weight: Optional[float] = None
     loosing_weight_rate: Optional[float] = None
     health_analysis: Optional[str] = None
     meal_plan: Optional[Dict[str, Any]] = None
-    current_nutrients: Optional[Dict[str, Any]] = None
 
 class TextFoodLogOutput(BaseModel):
     calories: float
@@ -35,11 +36,8 @@ class TextFoodLogOutput(BaseModel):
     fats: float
 
 class NutritionFoodLogOutput(BaseModel):
-    food_name: str
-    calories: float
-    carbs: float
-    protein: float
-    fats: float
+    foods: List[FoodItem]
+    reasoning: str
 
 class InsightLogOutput(BaseModel):
     nutrition_tip: str
