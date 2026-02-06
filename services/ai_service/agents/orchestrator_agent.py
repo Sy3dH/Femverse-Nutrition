@@ -6,9 +6,13 @@ from services.ai_service.agents.logging.nutrition_insights_agent import Nutritio
 from services.ai_service.agents.logging.nutrition_text_logging_agent import NutritionTextLoggingAgent
 from services.ai_service.agents.logging.nutrition_image_logging_agent import NutritionImageLoggingAgent
 from services.ai_service.agents.logging.nutrition_image_label_logging_agent import NutritionLabelImageLoggingAgent
+from services.ai_service.agents.persona.menstruation_persona_agent import MenstruationPersonaAgent
+from services.ai_service.agents.persona.pregnancy_persona_agent import PregnancyPersonaAgent
 from services.ai_service.modules.enums import AgentName, AgentModuleEnum
 from services.ai_service.modules.nutrition.models import NutritionInputs
 from services.ai_service.modules.logging.models import (TextFoodLogInput, ImageFoodLogInput, InsightsInputs,
+                                                       )
+from services.ai_service.modules.persona.models import (MenstruationPersonaUpdateInput, PregnancyPersonaUpdateInput,
                                                        )
 from services.ai_service.resolvers.nutrition_resolver import NutritionInputResolver
 from services.ai_service.resolvers.nutrition_tip_resolver import NutritionTipInputResolver
@@ -44,6 +48,16 @@ class AgentsOrchestrator:
                     "agent": NutritionLabelImageLoggingAgent(llm_service=llm_service),
                     "resolver": NutritionTipInputResolver(),
                 }
+            },
+            AgentModuleEnum.PERSONA.value: {
+                AgentName.MENSTRUATION_PERSONA_UPDATE.value: {
+                    "agent": MenstruationPersonaAgent(llm_service=llm_service),
+                    "resolver": None,  # Direct inputs only
+                },
+                AgentName.PREGNANCY_PERSONA_UPDATE.value: {
+                    "agent": PregnancyPersonaAgent(llm_service=llm_service),
+                    "resolver": None,  # Direct inputs only
+                },
             }
         }
 

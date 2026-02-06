@@ -1,0 +1,99 @@
+{
+  "user_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "last_updated": "2026-01-27",
+  "persona_version": "1.0",
+  "identity_baseline": {
+    "age": 29,
+    "baseline_vitals": "Current weight 71kg, height 5'5\", BMI 26.2. Weight has been tracked consistently through daily logs.",
+    "general_health_summary": "Experiencing typical third trimester symptoms based on logged data. Consistent supplement intake and regular physical activity indicate good health engagement."
+  },
+  "pregnancy_journey": {
+    "current_week": 32,
+    "current_trimester": "Third Trimester",
+    "trimester_specific_patterns": {
+      "first_trimester": "Limited data from earlier logs. Historical patterns not yet accumulated.",
+      "second_trimester": "Limited data from earlier logs. Historical patterns not yet accumulated.",
+      "third_trimester": "Current phase showing symptom cluster of back pain, fatigue, frequent urination, and swelling. GI symptoms include acid reflux and constipation. Sleep quality declining with frequent waking."
+    }
+  },
+  "symptom_memory": {
+    "chronic_patterns": "Third trimester symptom cluster emerging: Back pain, Fatigue, Frequent urination, and Insomnia appear consistently in general_symptoms. GI cluster of Acid reflux and Constipation also recurring. Swelling in feet is a consistent finding.",
+    "symptom_clusters": "Primary cluster: Back pain + Fatigue + Frequent urination + Insomnia (general discomfort). Secondary cluster: Acid reflux + Constipation + Food aversion (GI-related). Swelling cluster: Edema in feet + general swelling.",
+    "body_signals": "Vaginal discharge logged as 'Thick and creamy discharge' - normal for third trimester. No concerning discharge patterns detected.",
+    "anomaly_buffer": [
+      {
+        "symptom": "Edema in feet",
+        "first_seen": "2026-01-20",
+        "pregnancy_week": 31,
+        "occurrences": 3,
+        "context": "Swelling symptoms logged consistently in third trimester. No accompanying headaches or visual changes logged in mood_symptoms.",
+        "status": "watching"
+      }
+    ]
+  },
+  "emotional_profile": {
+    "baseline_mood": "Mixed emotional state based on daily_feelings: 'Excited' indicates positive anticipation, while 'Heavy' and 'Tired' reflect physical burden of late pregnancy.",
+    "mood_patterns": "Mood symptoms show: Anxious, Mood Swings, and low energy. Anxiety appears alongside sleep disruption (waking up frequently). Low energy correlates with general fatigue symptoms.",
+    "coping_patterns": "Physical activity logged as 'Yoga' suggests active coping strategy. When yoga is logged, may correlate with improved mood states - requires more data to confirm."
+  },
+  "lifestyle_matrix": {
+    "prenatal_supplement_routine": "Consistent intake logged: Folic Acid, Iron, Calcium, Vitamin D. Full prenatal supplement compliance detected.",
+    "physical_activity_baseline": "Yoga logged as primary physical activity. Activity level appropriate for third trimester pregnancy.",
+    "sleep_pattern": "Sleep quality logged as 'waking up frequently'. Consistent with third trimester pattern of sleep disruption due to physical discomfort and frequent urination.",
+    "beneficial_interventions": [
+      {
+        "intervention": "Yoga",
+        "observed_effect": "Physical activity maintained despite discomfort. Potential mood and back pain benefits - requires correlation data.",
+        "confidence": "low"
+      },
+      {
+        "intervention": "Prenatal supplements (Iron, Folic Acid, Calcium, Vitamin D)",
+        "observed_effect": "Consistent compliance supports overall pregnancy health",
+        "confidence": "moderate"
+      }
+    ],
+    "detrimental_triggers": [
+      {
+        "trigger": "Poor sleep quality",
+        "observed_effect": "Correlates with low energy in daily_feelings and mood_symptoms",
+        "confidence": "moderate"
+      }
+    ]
+  },
+  "health_watchlist": {
+    "active_flags": [
+      {
+        "flag_id": "preg_flag_001",
+        "signal": "Swelling symptoms in lower extremities",
+        "medical_parallel": "Edema is common in third trimester but consistent swelling warrants monitoring. Currently no headaches, visual changes, or high BP indicators logged in daily symptoms.",
+        "supporting_evidence": [
+          "swelling_symptoms includes 'swelling' and 'Edema in feet'",
+          "Currently at Week 32 - third trimester when edema is common",
+          "No headache or visual disturbance in mood_symptoms or general_symptoms",
+          "No urgent symptoms accompanying the swelling"
+        ],
+        "confidence": "low",
+        "urgency": "monitor_closely",
+        "trend": "stable",
+        "recommendation": "Continue monitoring swelling through daily logs. Flag for escalation if headaches, visual changes, or sudden weight gain appear in logs.",
+        "first_flagged": "2026-01-20",
+        "pregnancy_week_flagged": 31,
+        "last_updated": "2026-01-27"
+      }
+    ],
+    "resolved_flags": [],
+    "protective_factors": [
+      "Consistent prenatal supplement intake (all 4 key supplements logged)",
+      "Regular physical activity (Yoga) maintained",
+      "Active engagement with health tracking through daily logging"
+    ]
+  },
+  "longitudinal_trends": {
+    "symptom_intensity_trend": "Baseline established for third trimester. Multiple symptom categories logged suggests typical late pregnancy discomfort level.",
+    "energy_trend": "Daily feelings include 'Tired' and mood_symptoms include 'low energy' - consistent with third trimester energy decline.",
+    "mood_trend": "Mixed emotions logged: 'Excited' balanced with 'Anxious' and 'Mood Swings'. Typical emotional pattern for late pregnancy.",
+    "sleep_trend": "Sleep quality 'waking up frequently' combined with 'insomnia' in general_symptoms indicates disrupted sleep pattern.",
+    "notable_shifts": "Current log establishes Week 32 baseline. Future logs will enable trend comparison."
+  },
+  "clinician_summary": "29-year-old at 32 weeks gestation logging typical third trimester symptoms: back pain, fatigue, frequent urination, insomnia, and lower extremity edema. GI symptoms of acid reflux and constipation also present. Emotional state shows mix of excitement and anxiety with mood swings. Sleep is disrupted. Protective factors include consistent prenatal supplement compliance (Folic Acid, Iron, Calcium, Vitamin D) and maintained physical activity (Yoga). Edema warrants continued monitoring but presents without concerning features. Overall pattern consistent with normal third trimester pregnancy based on logged data."
+}

@@ -1,0 +1,22 @@
+{
+  "age": 29,
+  "weight_kg": 71,
+  "height_ft": "5'5\"",
+  "BMI": 26.2,
+  "pregnancy_data": {
+    "pregnancy_week": 32,
+    "trimester": "Third Trimester"
+  },
+  "user_logged_data": {
+    "daily_feelings": ["Heavy", "Excited", "Tired"],
+    "breast_symptoms": ["Tender Breast", "Nipple Discharge"],
+    "swelling_symptoms": ["swelling", "Edema in feet"],
+    "gastrointestinal_symptoms": ["Acid reflux", "Constipation", "Food aversion"],
+    "mood_symptoms": ["Anxious", "Mood Swings", "low energy"],
+    "general_symptoms": ["Back pain", "Fatigue", "frequent urination", "insomnia"],
+    "vaginal_discharges": ["Thick and creamy discharge", "No discharge"],
+    "sleep_quality": "waking up frequently",
+    "physical_activity": "Yoga",
+    "supplements": ["Folic Acid", "Iron", "Calcium", "Vitamin D"]
+  }
+}

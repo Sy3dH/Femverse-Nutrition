@@ -7,6 +7,8 @@ class AgentName(Enum):
     NUTRITION_IMAGE_LOGGING = "nutrition-image-logging"
     NUTRITION_LABEL_IMAGE_LOGGING = "nutrition-label-image-logging"
     NUTRITION_INSIGHTS = "nutrition-insights"
+    MENSTRUATION_PERSONA_UPDATE = "menstruation-persona-update"
+    PREGNANCY_PERSONA_UPDATE = "pregnancy-persona-update"
 
 
 class PlanType(Enum):
@@ -29,3 +31,4 @@ class PlanType(Enum):
 
 class AgentModuleEnum(Enum):
     NUTRITION = "nutrition"
+    PERSONA = "persona"

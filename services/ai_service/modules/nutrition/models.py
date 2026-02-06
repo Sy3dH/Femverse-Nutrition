@@ -88,6 +88,9 @@ class NutritionInputs(BaseModel):
     target_weight: Optional[float] = None
     location: Optional[str] = None
     alerts: List[str] = []
+    menstruation_persona: Optional[Dict[str, Any]] = None
+    pregnancy_persona: Optional[Dict[str, Any]] = None
+
 
 class NutritionTipInputs(BaseModel):
     health_analysis: str
