@@ -87,6 +87,9 @@ class NutritionInputs(BaseModel):
     weight_change_rate: Optional[str] = None #Already coming from the onboarding
     target_weight: Optional[float] = None #Already coming from the onboarding
     alerts: List[str] = []
+    menstruation_persona: Optional[Dict[str, Any]] = None
+    pregnancy_persona: Optional[Dict[str, Any]] = None
+
 
 class Ingredient(BaseModel):
     item: str
