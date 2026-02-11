@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import Optional
 from services.ai_service.agents.orchestrator_agent import AgentsOrchestrator
-from services.ai_service.modules.nutrition.models import NutritionInputs, NutritionTipInputs
+from services.ai_service.modules.logging.models import InsightsInputs
 from services.ai_service.modules.enums import AgentModuleEnum, AgentName, PlanType
 from services.ai_service.utils.nutrition_plans import PLAN_TEMPLATES
 
@@ -13,7 +13,7 @@ async def nutrition_plan(
     plan_type: PlanType,
     user_id: Optional[str] = None,
     date: Optional[int] = None,
-    body: NutritionInputs = None,
+    body: InsightsInputs = None,
 ):
     direct_inputs = body.model_dump() if body else None
     direct_inputs["plan_type"] = plan_type.value
