@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Optional, Dict, Any, Tuple, Union
+from typing import Optional, Dict, Any, Tuple
 
 from services.ai_service.base_agent import BaseAgent
 from services.ai_service.modules.persona.models import PregnancyPersonaUpdateInput
@@ -19,37 +19,24 @@ class PregnancyPersonaAgent(BaseAgent):
 
     async def run(
         self,
-        inputs: Union[PregnancyPersonaUpdateInput, Dict[str, Any]]
+        inputs: PregnancyPersonaUpdateInput,
     ) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
         """
         Update the pregnancy persona with today's daily log.
 
         Args:
-            inputs: Either PregnancyPersonaUpdateInput or dict containing
+            inputs: PregnancyPersonaUpdateInput containing
                    'previous_persona' and 'daily_log'
 
         Returns:
             Tuple of (updated_persona_dict, error_message)
         """
         try:
-            # Normalize inputs to plain dicts
-            if isinstance(inputs, dict):
-                previous_persona = inputs.get("previous_persona", {})
-                daily_log = inputs.get("daily_log", {})
-            else:
-                previous_persona = inputs.previous_persona.model_dump()
-                daily_log = inputs.daily_log.model_dump()
-
-            # Build context for PromptBuilder (pre-serialized JSON strings)
-            context_data = {
-                "previous_persona": json.dumps(previous_persona, indent=2, ensure_ascii=False),
-                "daily_log": json.dumps(daily_log, indent=2, ensure_ascii=False),
-            }
 
             # Use PromptBuilder to construct the final prompt
             prompt = PromptBuilder.build_prompt(
                 agent_name=AgentName.PREGNANCY_PERSONA_UPDATE.value,
-                data=context_data,
+                data=inputs,
             )
 
             # Call LLM using default temperature and no explicit system prompt
