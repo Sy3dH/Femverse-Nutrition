@@ -1033,11 +1033,9 @@ Health Goals: {health_goals}
 
 Current Weight: {current_weight}
 
-Loosing weight rate: {loosing_weight_rate}
+Weight change rate: {weight_change_rate}
 
 Target Weight: {target_weight}
-
-Location: {location}
 
 Alerts: {alerts}
 
@@ -1148,18 +1146,62 @@ Respond strictly in JSON.
 NUTRITION_TEXT_LOGGING_PROMPT = """
 You are a clinical nutrition assistant.
 
-Your task is to analyze a single food item entered by the user and estimate its nutritional content.
+Your task is to analyze the user's food input and estimate its nutritional content, taking into account local cuisine, regional ingredients, typical preparation methods, and culturally realistic portion sizes based on the user's locale.
 
-Food Input:
-- Name: {food_name}
+### Input:
 
-Rules:
-- Estimate calories, carbohydrates, protein, and fats.
-- If portion and unit are provided, calculate nutrition proportionally.
-- Use common household and culturally realistic serving sizes when making assumptions.
-- Round all values to one decimal place.
-- Respond strictly in JSON and do not include any explanations or text outside the JSON.
+* User text: {food_name}
+* Locale: {locale}
 
+### Processing Rules:
+
+1. **Food Extraction**
+
+   * If the user enters a full sentence (e.g., *"I had chicken karahi and 2 rotis"*), extract all food items mentioned.
+   * Normalize spelling variations and synonyms of the same dish or item
+     (e.g., *fries ↔ chips*, *soda ↔ soft drink*, *roti ↔ chapati*, *dal ↔ daal*).
+
+2. **Multiple Food Items**
+
+   * If multiple food items are present in a single input, treat **each item separately**.
+   * Estimate nutrition for **each food item individually**, then provide a **combined total**.
+
+3. **Ambiguous / Generic Food Names**
+
+   * If a generic food name is given that can represent multiple variants
+     (e.g., *sandwich, curry, pizza*):
+
+     * Select the **most commonly consumed local variant** based on the user's locale.
+     * Example:
+
+       * *sandwich → chicken sandwich (default)*
+       * *curry → chicken curry (default in South Asia)*
+   * Clearly standardize to one realistic base variant before estimating nutrition.
+
+4. **Portion Handling**
+
+   * If portion and unit are provided, calculate nutrition proportionally.
+   * If not provided, assume **culturally realistic household serving sizes** based on locale.
+
+5. **Nutrition Estimation**
+
+   * Estimate:
+
+     * Calories (kcal)
+     * Carbohydrates (g)
+     * Protein (g)
+     * Fats (g)
+
+6. **Output Formatting**
+
+   * Round all numeric values to **one decimal place**.
+   * Respond **strictly in JSON**.
+   * Do **not include any explanation, comments, or extra text** outside JSON.
+   
+7. **Invalid / Random Input Handling**
+
+    * If the input does not clearly contain a recognizable food item (e.g., random text, emojis, gibberish), return 
+    a structured JSON error asking for clearer food input.
 """
 
 NUTRITION_INSIGHTS_PROMPT = """
@@ -1178,7 +1220,7 @@ User Health & Goal Context:
 
 Target Weight: {target_weight}
 Current Weight: {current_weight}
-Expected Weight Loss Rate (per week): {loosing_weight_rate}
+Expected Weight Loss Rate (per week): {weight_change_rate}
 
 --------------------------------------------------
 Current Meal Plan:
