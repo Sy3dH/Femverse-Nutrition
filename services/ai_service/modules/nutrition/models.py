@@ -79,24 +79,14 @@ class NutritionInputs(BaseModel):
     pregnancy_data: Optional[PregnancyDataInput] = None
     bmi: Optional[float] = None
     bmr: Optional[float] = None
-    country: Optional[str] = None
+    country: Optional[str] = None # Not sure
     food_prefs: Optional[str] = None
     allergies: Optional[str] = None
-    health_goals: Optional[str] = None
-    current_weight: Optional[str] = None
-    loosing_weight_rate: Optional[str] = None
-    target_weight: Optional[float] = None
-    location: Optional[str] = None
+    health_goals: Optional[str] = None #Already coming from the onboarding
+    current_weight: Optional[str] = None  #Already coming from the onboarding
+    weight_change_rate: Optional[str] = None #Already coming from the onboarding
+    target_weight: Optional[float] = None #Already coming from the onboarding
     alerts: List[str] = []
-
-class NutritionTipInputs(BaseModel):
-    health_analysis: str
-    meal_plan: Dict[str, Any]
-    nutrients: Dict[str, Any]
-
-class NutritionTipOutput(BaseModel):
-    nutrition_tip: str
-    reasoning: str
 
 class Ingredient(BaseModel):
     item: str
