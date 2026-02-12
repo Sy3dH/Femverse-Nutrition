@@ -1,8 +1,12 @@
 from typing import Optional, Dict, Any, List
 from pydantic import BaseModel
 
+class ImageExtraInput(BaseModel):
+    locale: str
+
 class ImageFoodLogInput(BaseModel):
     image_content: bytes
+    extra: Optional[ImageExtraInput]
 
 class FoodItem(BaseModel):
     name: str
