@@ -173,7 +173,6 @@ class MenstruationPersona(BaseModel):
     Complete menstruation user persona structure.
     Matches POC/Menstruation/Input_Persona.json schema.
     """
-    user_id: Optional[str] = None
     last_updated: Optional[str] = None
     persona_version: Optional[str] = None
     identity_baseline: Optional[IdentityBaseline] = None
@@ -191,7 +190,6 @@ class PregnancyPersona(BaseModel):
     Complete pregnancy user persona structure.
     Matches POC/Pregnancy/Input_Persona.json schema.
     """
-    user_id: Optional[str] = None
     last_updated: Optional[str] = None
     persona_version: Optional[str] = None
     identity_baseline: Optional[IdentityBaseline] = None
