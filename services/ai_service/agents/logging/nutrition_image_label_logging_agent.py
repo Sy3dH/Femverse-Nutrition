@@ -13,8 +13,14 @@ class NutritionLabelImageLoggingAgent(BaseAgent):
         inputs: ImageFoodLogInput
     ) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
         try:
+
+            logging_prompt = PromptBuilder.build_prompt(
+                agent_name=AgentName.NUTRITION_IMAGE_LOGGING.value,
+                data=inputs.extra
+            )
+
             response, error = self.query_llm(
-                prompt=PromptBuilder.build_template(AgentName.NUTRITION_LABEL_IMAGE_LOGGING.value),
+                prompt=logging_prompt,
                 image_bytes=inputs.image_content,
                 output_schema=NutritionFoodLogOutput
             )
