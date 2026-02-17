@@ -15,6 +15,14 @@ class FoodItem(BaseModel):
     protein: float
     fats: float
 
+class TextFoodItem(BaseModel):
+    name: str
+    servings: float
+    calories: float
+    carbs: float
+    protein: float
+    fats: float
+
 class ImageFoodLogOutput(BaseModel):
     status: int
     foods: List[FoodItem]
@@ -36,7 +44,7 @@ class InsightsInputs(BaseModel):
 
 class TextFoodLogOutput(BaseModel):
     status: int
-    foods: List[FoodItem]
+    foods: List[TextFoodItem]
     error: Optional[str] = None
     verbose_reasoning: str
 
