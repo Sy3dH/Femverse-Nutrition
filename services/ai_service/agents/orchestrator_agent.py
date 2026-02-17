@@ -12,8 +12,6 @@ from services.ai_service.modules.enums import AgentName, AgentModuleEnum
 from services.ai_service.modules.nutrition.models import NutritionInputs
 from services.ai_service.modules.logging.models import (TextFoodLogInput, ImageFoodLogInput, InsightsInputs,
                                                        )
-from services.ai_service.modules.persona.models import (MenstruationPersonaUpdateInput, PregnancyPersonaUpdateInput,
-                                                       )
 from services.ai_service.resolvers.nutrition_resolver import NutritionInputResolver
 from services.ai_service.resolvers.nutrition_tip_resolver import NutritionTipInputResolver
 
