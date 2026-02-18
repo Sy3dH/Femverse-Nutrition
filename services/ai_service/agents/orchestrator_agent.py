@@ -63,7 +63,7 @@ class AgentsOrchestrator:
             agent: str,
             user_id: Optional[str] = None,
             date: Optional[int] = None,
-            direct_inputs: Optional[Union[NutritionInputs, InsightsInputs,TextFoodLogInput, ImageFoodLogInput]] = None,
+            direct_inputs: Optional[Union[NutritionInputs, InsightsInputs,TextFoodLogInput, ImageFoodLogInput, MenstruationPersonaUpdateInput, PregnancyPersonaUpdateInput]] = None,
     ) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
 
         if module not in self.registry:
