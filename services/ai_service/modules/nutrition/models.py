@@ -82,11 +82,20 @@ class NutritionInputs(BaseModel):
     country: Optional[str] = None # Not sure
     food_prefs: Optional[str] = None
     allergies: Optional[str] = None
+    target_calories: Optional[int] = None
     health_goals: Optional[str] = None #Already coming from the onboarding
     current_weight: Optional[str] = None  #Already coming from the onboarding
     weight_change_rate: Optional[str] = None #Already coming from the onboarding
     target_weight: Optional[float] = None #Already coming from the onboarding
     alerts: List[str] = []
+    menstruation_persona: Optional[Dict[str, Any]] = None
+    pregnancy_persona: Optional[Dict[str, Any]] = None
+
+
+class NutritionInputsDummy(BaseModel):
+    onboarding_data: Optional[OnboardingNutritionInput] = None # We want this
+    menstrual_data: Optional[MenstrualDataInput] = None
+    pregnancy_data: Optional[PregnancyDataInput] = None
     menstruation_persona: Optional[Dict[str, Any]] = None
     pregnancy_persona: Optional[Dict[str, Any]] = None
 
