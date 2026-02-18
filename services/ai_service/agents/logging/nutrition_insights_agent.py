@@ -8,15 +8,17 @@ from services.ai_service.modules.logging.models import InsightsInputs, InsightLo
 logger = logging.getLogger("celery")
 
 class NutritionInsightsAgent(BaseAgent):
-    async def run(self, inputs: InsightsInputs) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+    async def run(self, inputs: InsightsInputs,
+                  cached_content_name: Optional[str] = None) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
         try:
-            nutrition_prompt = PromptBuilder.build_prompt(
+            nutrition_user_prompt = PromptBuilder.build_prompt(
                 agent_name=AgentName.NUTRITION_INSIGHTS.value,
                 data=inputs
             )
 
             response, error = self.query_llm(
-                prompt=nutrition_prompt,
+                prompt=nutrition_user_prompt,
+                cached_content_name=cached_content_name,
                 output_schema=InsightLogOutput,
             )
 

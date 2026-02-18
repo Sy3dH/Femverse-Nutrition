@@ -8,16 +8,22 @@ from services.ai_service.modules.logging.models import TextFoodLogInput, TextFoo
 logger = logging.getLogger("celery")
 
 class NutritionTextLoggingAgent(BaseAgent):
-    async def run(self, inputs: TextFoodLogInput) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+
+    async def run(
+            self,
+            inputs: TextFoodLogInput,
+            cached_content_name: Optional[str] = None,
+    ) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
         try:
-            nutrition_prompt = PromptBuilder.build_prompt(
+            nutrition_user_prompt = PromptBuilder.build_prompt(
                 agent_name=AgentName.NUTRITION_TEXT_LOGGING.value,
                 data=inputs
             )
 
             response, error = self.query_llm(
-                prompt=nutrition_prompt,
+                prompt=nutrition_user_prompt,
                 output_schema=TextFoodLogOutput,
+                cached_content_name=cached_content_name,
             )
 
             if error:
@@ -26,6 +32,5 @@ class NutritionTextLoggingAgent(BaseAgent):
             return response, None
 
         except Exception as e:
-            logger.exception("NutritionAgent failed")
+            logger.exception("NutritionTextLoggingAgent failed")
             return None, str(e)
-
