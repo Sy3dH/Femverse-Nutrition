@@ -1,11 +1,24 @@
 from typing import Optional, Dict, Any, List
 from pydantic import BaseModel
 
+class ImageExtraInput(BaseModel):
+    lang: str
+    timezone: str
+
 class ImageFoodLogInput(BaseModel):
     image_content: bytes
+    extra: Optional[ImageExtraInput]
 
 class FoodItem(BaseModel):
     name: str
+    calories: float
+    carbs: float
+    protein: float
+    fats: float
+
+class TextFoodItem(BaseModel):
+    name: str
+    servings: float
     calories: float
     carbs: float
     protein: float
@@ -19,7 +32,8 @@ class ImageFoodLogOutput(BaseModel):
 
 class TextFoodLogInput(BaseModel):
     food_name: str
-    locale:str
+    lang:str
+    timezone: str
 
 class InsightsInputs(BaseModel):
     log_input: TextFoodLogInput
@@ -32,7 +46,7 @@ class InsightsInputs(BaseModel):
 
 class TextFoodLogOutput(BaseModel):
     status: int
-    foods: List[FoodItem]
+    foods: List[TextFoodItem]
     error: Optional[str] = None
     verbose_reasoning: str
 

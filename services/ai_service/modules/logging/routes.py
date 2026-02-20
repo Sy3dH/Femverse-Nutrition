@@ -1,11 +1,13 @@
 from fastapi import APIRouter, HTTPException
 from services.ai_service.agents.orchestrator_agent import AgentsOrchestrator
-from services.ai_service.modules.logging.models import (TextFoodLogInput, ImageFoodLogInput, InsightsInputs)
+from services.ai_service.modules.logging.models import (TextFoodLogInput, ImageFoodLogInput, InsightsInputs,
+                                                        ImageExtraInput)
 from services.ai_service.modules.enums import AgentModuleEnum, AgentName
 from fastapi import UploadFile, File
 import logging
 from fastapi import Form
-from typing import Optional, Union
+from typing import Optional
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -42,13 +44,23 @@ async def nutrition_text_logging(
 
 @logging_router.post("/nutrition_image_logging")
 async def nutrition_image_logging(
-        image: UploadFile = File(...),
-        user_id: Optional[str] = Form(None),
-        date: Optional[int] = Form(None)
+    image: UploadFile = File(...),
+    lang: Optional[str] = Form(None),
+    timezone: Optional[str] = Form(None),
+    user_id: Optional[str] = Form(None),
+    date: Optional[int] = Form(None),
 ):
     try:
+        extra_input = ImageExtraInput(
+            lang=lang,
+            timezone=timezone,
+        )
+
+        image_bytes = await image.read()
+
         direct_inputs = ImageFoodLogInput(
-            image_content=await image.read()
+            image_content=image_bytes,
+            extra=extra_input
         )
 
         result, error = await orchestrator.run_agents_for_module(
@@ -61,26 +73,43 @@ async def nutrition_image_logging(
 
         if error:
             logger.error(f"Image food logging failed for user {user_id}: {error}")
-            raise HTTPException(status_code=400, detail=f"Failed to log food from image: {error}")
+            raise HTTPException(
+                status_code=400,
+                detail=f"Failed to log food from image: {error}"
+            )
 
         return result
 
     except HTTPException:
         raise
-    except Exception as e:
-        logger.exception(f"Unexpected error in nutrition_image_logging for user {user_id}")
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
-
+    except Exception:
+        logger.exception(
+            f"Unexpected error in nutrition_image_logging for user {user_id}"
+        )
+        raise HTTPException(
+            status_code=500,
+            detail="Internal server error"
+        )
 
 @logging_router.post("/nutrition_label_image_logging")
 async def nutrition_label_image_logging(
         image: UploadFile = File(...),
+        lang: Optional[str] = Form(None),
+        timezone: Optional[str] = Form(None),
         user_id: Optional[str] = None,
         date: Optional[int] = None,
 ):
     try:
+        extra_input = ImageExtraInput(
+            lang=lang,
+            timezone=timezone,
+        )
+
+        image_bytes = await image.read()
+
         direct_inputs = ImageFoodLogInput(
-            image_content=await image.read()
+            image_content=image_bytes,
+            extra=extra_input
         )
 
         result, error = await orchestrator.run_agents_for_module(
