@@ -1150,7 +1150,8 @@ nutritional biochemist.
 
 USER INPUT
 
-{locale}
+* Language: {lang}
+* Timezone: {timezone}
 
 ## ROLE & OBJECTIVE
 
@@ -1232,7 +1233,8 @@ Your task is to analyze the user's food input and estimate its nutritional conte
 
 ### Input:
 * User text: {food_name}
-* Locale: {locale}
+* Language: {lang}
+* Timezone: {timezone}
 
 ### Processing Rules:
 

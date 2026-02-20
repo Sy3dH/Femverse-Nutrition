@@ -2,7 +2,8 @@ from typing import Optional, Dict, Any, List
 from pydantic import BaseModel
 
 class ImageExtraInput(BaseModel):
-    locale: str
+    lang: str
+    timezone: str
 
 class ImageFoodLogInput(BaseModel):
     image_content: bytes
@@ -31,7 +32,8 @@ class ImageFoodLogOutput(BaseModel):
 
 class TextFoodLogInput(BaseModel):
     food_name: str
-    locale:str
+    lang:str
+    timezone: str
 
 class InsightsInputs(BaseModel):
     log_input: TextFoodLogInput
