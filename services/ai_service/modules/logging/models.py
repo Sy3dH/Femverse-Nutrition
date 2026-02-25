@@ -56,8 +56,16 @@ class NutritionFoodLogOutput(BaseModel):
     error: Optional[str] = None
     verbose_reasoning: str
 
+class NutritionTip(BaseModel):
+    title: str
+    body: str
+
+class Alerts(BaseModel):
+    title: str
+    body: str
+
 class InsightLogOutput(BaseModel):
-    nutrition_tip: str
+    nutrition_tip: List[NutritionTip]
     insights: str
     is_alert_to_change_meal_plan: bool
-    alerts: List[str]
+    alerts: List[Alerts]
