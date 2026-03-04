@@ -55,7 +55,7 @@ source .uv/bin/activate
 Start the FastAPI server using **Uvicorn**:
 
 ```bash
-uvicorn app.main:app --port 8000 --reload
+uvicorn app:app --port 8000 --reload
 ```
 
 * `--port 8000` → The port where the app will run (can be changed)

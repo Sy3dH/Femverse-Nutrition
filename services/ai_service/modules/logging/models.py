@@ -1,9 +1,12 @@
-import base64
 from typing import Optional, Dict, Any, List
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel
+
+class ImageExtraInput(BaseModel):
+    locale: str
 
 class ImageFoodLogInput(BaseModel):
     image_content: bytes
+    extra: Optional[ImageExtraInput]
 
 class FoodItem(BaseModel):
     name: str
@@ -12,32 +15,44 @@ class FoodItem(BaseModel):
     protein: float
     fats: float
 
-class ImageFoodLogOutput(BaseModel):
-    foods: List[FoodItem]
-    reasoning: str
+class TextFoodItem(BaseModel):
+    name: str
+    servings: float
+    calories: float
+    carbs: float
+    protein: float
+    fats: float
 
+class ImageFoodLogOutput(BaseModel):
+    status: int
+    foods: List[FoodItem]
+    error: Optional[str] = None
+    verbose_reasoning: str
 
 class TextFoodLogInput(BaseModel):
     food_name: str
+    locale:str
 
 class InsightsInputs(BaseModel):
     log_input: TextFoodLogInput
     current_nutrients: Optional[Dict[str, Any]] = None
     target_weight: Optional[float] = None
     current_weight: Optional[float] = None
-    loosing_weight_rate: Optional[float] = None
+    weight_change_rate: Optional[float] = None
     health_analysis: Optional[str] = None
     meal_plan: Optional[Dict[str, Any]] = None
 
 class TextFoodLogOutput(BaseModel):
-    calories: float
-    carbs: float
-    protein: float
-    fats: float
+    status: int
+    foods: List[TextFoodItem]
+    error: Optional[str] = None
+    verbose_reasoning: str
 
 class NutritionFoodLogOutput(BaseModel):
+    status: int
     foods: List[FoodItem]
-    reasoning: str
+    error: Optional[str] = None
+    verbose_reasoning: str
 
 class InsightLogOutput(BaseModel):
     nutrition_tip: str

@@ -10,6 +10,7 @@ from services.ai_service.config.constants import (
     GEMINI_EMBEDDING_MODEL,
     FITNESS_FINE_TUNED_MODEL_ENDPOINT
 )
+from services.ai_service.cache.gemini_cache_registry import GeminiCacheRegistry
 from dotenv import load_dotenv
 
 
@@ -20,8 +21,16 @@ VERTEX_AI_CREDS_PATH = os.getenv("VERTEX_AI_CREDENTIALS_PATH")
 VERTEX_AI_PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT_ID")
 VERTEX_AI_LOCATION = os.getenv("LOCATION_VERTEX_AI", "us-central1")
 
-print(VERTEX_AI_CREDS_PATH,VERTEX_AI_LOCATION,VERTEX_AI_PROJECT_ID)
-
+GEMINI_PRICING = {
+    # model substring -> (input_per_1m, output_per_1m, cached_input_per_1m)
+    "gemini-2.5-pro":        (1.25,  10.00, 0.31),
+    "gemini-2.5-flash":      (0.30,   2.50, 0.075),
+    "gemini-2.5-flash-lite": (0.10,   0.40, 0.025),
+    "gemini-2.0-flash-lite": (0.075,  0.30, 0.01875),
+    "gemini-2.0-flash":      (0.10,   0.40, 0.025),
+    "gemini-1.5-pro":        (1.25,   5.00, 0.3125),
+    "gemini-1.5-flash":      (0.075,  0.30, 0.01875),
+}
 
 def build_gemini_history_context(
         history: List[Dict[str, str]],
@@ -53,6 +62,22 @@ def build_gemini_history_context(
             formatted_history.append(formatted)
 
     return formatted_history
+
+
+def _get_gemini_cost(model_identifier: str, input_tokens: int, output_tokens: int,
+                     cached_tokens: int) -> float | None:
+    """Calculate the cost in USD for a Gemini API call, or None if model pricing is unknown."""
+    model_lower = model_identifier.lower()
+    pricing = next((v for k, v in GEMINI_PRICING.items() if k in model_lower), None)
+    if pricing is None:
+        return None
+    input_price, output_price, cached_price = pricing
+    non_cached_input = max(0, input_tokens - cached_tokens)
+    return (
+            (non_cached_input * input_price / 1_000_000)
+            + (cached_tokens * cached_price / 1_000_000)
+            + (output_tokens * output_price / 1_000_000)
+    )
 
 
 class GeminiLLMService:
@@ -101,8 +126,10 @@ class GeminiLLMService:
             self.model_identifier = model_name
             logger.info(f"Initialized base Gemini model: {model_name} using Google Gen AI SDK")
 
-    from pydantic import BaseModel
-    from typing import Type
+        self.cache_registry = GeminiCacheRegistry(
+            client=self.client,
+            model=self.model_identifier,
+        )
 
     def send_prompt(
             self,
@@ -112,18 +139,23 @@ class GeminiLLMService:
             temperature: float = 0.7,
             image_bytes: Optional[bytes] = None,
             image_mime_type: str = "image/jpeg",
-            output_schema: Optional[Type[BaseModel]] = None
+            output_schema: Optional[Any] = None,
+            cached_content_name: Optional[str] = None,
     ) -> tuple[None, str] | None | tuple[Any, None] | tuple[str | None, None]:
         """
         Sends a prompt to the Gemini model with optional structured output.
 
-        :param image_mime_type:
-        :param image_bytes:
-        :param temperature:
-        :param is_json_response:
-        :param history_context:
-        :param prompt:
-        :param output_schema: Optional Pydantic model for structured output.
+        :param prompt:               The user's current message.
+        :param history_context:      Formatted prior turns from build_gemini_history_context().
+        :param is_json_response:     Whether to parse and return a JSON response.
+        :param temperature:          Sampling temperature.
+        :param image_bytes:          Optional raw image bytes to include in the request.
+        :param image_mime_type:      MIME type of image_bytes.
+        :param output_schema:        Optional Pydantic model for structured output validation.
+        :param cached_content_name:  Full Gemini cache resource name
+                                     ("projects/.../cachedContents/ID").
+                                     When provided, the cached system prompt is injected by
+                                     Gemini automatically — do NOT re-send it in contents.
         """
         try:
             prompt_list = [f"User: {prompt}"]
@@ -144,6 +176,12 @@ class GeminiLLMService:
             if output_schema:
                 config_params["response_schema"] = output_schema
 
+            # Wire in the server-side cache when provided.
+            # Gemini injects the cached system prompt on its side —
+            # no need to include it in contents.
+            if cached_content_name:
+                config_params["cached_content"] = cached_content_name
+
             config = GenerateContentConfig(**config_params)
 
             if not is_json_response and not output_schema:
@@ -152,6 +190,7 @@ class GeminiLLMService:
                     contents=contents,
                     config=config
                 )
+                self._log_cache_usage(response)
                 return response.text, None
 
             # JSON parsing with retries
@@ -164,6 +203,8 @@ class GeminiLLMService:
                     contents=contents,
                     config=config
                 )
+
+                self._log_cache_usage(response)
 
                 try:
                     parsed = json.loads(response.text)
@@ -196,6 +237,53 @@ class GeminiLLMService:
         except Exception as e:
             logger.error(f"Error occurred during llm response generation. Error={str(e)}")
             return None, str(e)
+
+    # Gemini API pricing per 1M tokens (USD) — update as needed
+    # Source: https://ai.google.dev/gemini-api/docs/pricing
+    GEMINI_PRICING = {
+        # model substring -> (input_per_1m, output_per_1m, cached_input_per_1m)
+        "gemini-2.5-pro": (1.25, 10.00, 0.31),
+        "gemini-2.5-flash": (0.30, 2.50, 0.075),
+        "gemini-2.5-flash-lite": (0.10, 0.40, 0.025),
+        "gemini-2.0-flash-lite": (0.075, 0.30, 0.01875),
+        "gemini-2.0-flash": (0.10, 0.40, 0.025),
+        "gemini-1.5-pro": (1.25, 5.00, 0.3125),
+        "gemini-1.5-flash": (0.075, 0.30, 0.01875),
+    }
+
+    def _log_cache_usage(self, response) -> None:
+        """
+        Log cached token counts and estimated cost from the response usage metadata.
+        A non-zero cached_content_token_count confirms the cache was hit
+        and those tokens were billed at the discounted rate.
+        """
+        try:
+            usage = getattr(response, "usage_metadata", None)
+            if usage is None:
+                return
+
+            cached_tokens = getattr(usage, "cached_content_token_count", 0) or 0
+            input_tokens = getattr(usage, "prompt_token_count", 0) or 0
+            output_tokens = getattr(usage, "candidates_token_count", 0) or 0
+            total_tokens = getattr(usage, "total_token_count", 0) or 0
+
+            cost = _get_gemini_cost(self.model_identifier, input_tokens, output_tokens, cached_tokens)
+            cost_part = f", cost=${cost:.6f}" if cost is not None else ""
+
+            if cached_tokens:
+                print(
+                    f"[Gemini Cache] HIT — cached_tokens={cached_tokens}, "
+                    f"input_tokens={input_tokens}, output_tokens={output_tokens}, "
+                    f"total_tokens={total_tokens}, model={self.model_identifier}{cost_part}"
+                )
+            else:
+                print(
+                    f"[Gemini Cache] No cache hit — "
+                    f"input_tokens={input_tokens}, output_tokens={output_tokens}, "
+                    f"total_tokens={total_tokens}, model={self.model_identifier}{cost_part}"
+                )
+        except Exception as e:
+            logger.warning(f"[Gemini Cache] Failed to read usage_metadata: {e}")
 
     def get_embeddings(self, text: str) -> List[float]:
         """
@@ -272,9 +360,11 @@ fitness_gemini_service = GeminiLLMService.create_fine_tuned_service(
     model_name="fitness-fine-tuned-model"
 )
 
+
 def get_gemini_service() -> GeminiLLMService:
     """Get the default base Gemini service instance."""
     return gemini_service
+
 
 def get_fitness_gemini_service() -> GeminiLLMService:
     """Get the fitness fine-tuned Gemini service instance."""

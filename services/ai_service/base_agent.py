@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, List, Dict, Tuple, Any
 from services.ai_service.gemini_service import GeminiLLMService
 
+
 class BaseAgent(ABC):
     def __init__(self, llm_service: GeminiLLMService):
         self.llm = llm_service
@@ -21,18 +22,23 @@ class BaseAgent(ABC):
             temperature: float = 0.7,
             image_bytes: Optional[bytes] = None,
             image_mime_type: str = "image/jpeg",
-            output_schema: Optional[Type[BaseModel]] = None  # <-- Add this
+            output_schema: Optional[Any] = None,
+            cached_content_name: Optional[str] = None,
     ) -> Tuple[Dict[str, Any] | str, Optional[str]]:
         """
         Sends a prompt to the LLM (Gemini) and optionally includes an image for multimodal input.
 
-        :param prompt: Prompt string for the model.
-        :param history: Optional list of previous context strings.
-        :param is_json_response: Whether the response should be parsed as JSON.
-        :param temperature: Sampling temperature.
-        :param image_bytes: Optional image bytes for multimodal models.
-        :param image_mime_type: MIME type of the image (default: "image/jpeg").
-        :param output_schema: Optional Pydantic model for structured output.
+        :param prompt:               Prompt string for the model.
+        :param history:              Optional list of previous context strings.
+        :param is_json_response:     Whether the response should be parsed as JSON.
+        :param temperature:          Sampling temperature.
+        :param image_bytes:          Optional image bytes for multimodal models.
+        :param image_mime_type:      MIME type of the image (default: "image/jpeg").
+        :param output_schema:        Optional Pydantic model for structured output.
+        :param cached_content_name:  Full Gemini cache resource name
+                                     ("projects/.../cachedContents/ID").
+                                     Passed in by the orchestrator via agent.run() —
+                                     agents never create or manage this themselves.
         :return: Tuple of (response, error). Response is JSON if is_json_response=True.
         """
         return self.llm.send_prompt(
@@ -42,5 +48,6 @@ class BaseAgent(ABC):
             temperature=temperature,
             image_bytes=image_bytes,
             image_mime_type=image_mime_type,
-            output_schema=output_schema
+            output_schema=output_schema,
+            cached_content_name=cached_content_name,
         )

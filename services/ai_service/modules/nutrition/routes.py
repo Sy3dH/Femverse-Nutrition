@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import Optional
 from services.ai_service.agents.orchestrator_agent import AgentsOrchestrator
-from services.ai_service.modules.nutrition.models import NutritionInputs, NutritionTipInputs
+from services.ai_service.modules.nutrition.models import NutritionInputs
 from services.ai_service.modules.enums import AgentModuleEnum, AgentName, PlanType
 from services.ai_service.utils.nutrition_plans import PLAN_TEMPLATES
 

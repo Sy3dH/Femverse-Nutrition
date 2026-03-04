@@ -1008,78 +1008,26 @@ User State:
 - Stress Symptoms: {stress}
 """
 
-NUTRITION_AGENT_PROMPT = """You are a personalized nutrition assistant specializing in women's health.
-
-Your task is to provide **personalized meal plans for the next 3 days** based on comprehensive user data including body metrics, menstrual/pregnancy state, daily logs, and preferences.
-
-Plan Template:
-
-{plan_template}
-
+NUTRITION_AGENT_PROMPT = """
+Plan Template: {plan_template}
 Plan Type: {plan_type}
 User Profile:
-
 BMI: {bmi}
-
 BMR: {bmr}
-
 Country: {country}
-
 Food Preferences: {food_prefs}
-
 Allergies: {allergies}
-
 Health Goals: {health_goals}
-
 Current Weight: {current_weight}
-
-Loosing weight rate: {loosing_weight_rate}
-
+Weight change rate: {weight_change_rate}
 Target Weight: {target_weight}
-
-Location: {location}
-
 Alerts: {alerts}
-
-Onboarding Data:
-
-{onboarding_data}
-
-Menstrual Data:
-
-{menstrual_data}
-
-Pregnancy Data:
-
-{pregnancy_data}
-
-Menstruation Persona:
-
-{menstruation_persona}
-
-Pregnancy Persona:
-
-{pregnancy_persona}
-
----
-
-Generate a complete 3-day nutrition plan that includes:
-- **Day-by-day meal plans** with complete recipes and ingredients for each meal
-- **Detailed nutritional breakdown** for each meal (calories, protein, carbs, fats, fiber, key micronutrients)
-- **Grocery list** organized by category with quantities
-- **Personalized tips** for hydration, supplements, and key nutrients
-
-**IMPORTANT:** Respond with ONLY valid JSON (no markdown, no explanation, no preamble).
-
-**Additional Requirements:**
-- Ensure all recipes are practical and can be prepared within reasonable time
-- Consider the user's location/country for ingredient availability
-- Respect all dietary restrictions and allergies
-- Align caloric intake with BMR and health goals (weight loss/maintenance/gain)
-- Prioritize nutrients critical for current menstrual phase or pregnancy trimester
-- Alerts are triggered when a user logs food that negatively impacts their health. When alerts are present, 
-they must be taken into account while generating the meal plan.
-
+Onboarding Data: {onboarding_data}
+Target Calories: {target_calories}
+Menstrual Data:{menstrual_data}
+Pregnancy Data: {pregnancy_data}
+Menstruation Persona:{menstruation_persona}
+Pregnancy Persona: {pregnancy_persona}
 """
 
 # TODO: This is just a placeholder, need to refine it later
@@ -1106,157 +1054,28 @@ User State:
 """
 
 NUTRITION_LABEL_IMAGE_PROMPT = """
-You are a clinical nutrition assistant specialized in reading packaged food nutrition labels.
-
-You will be given an image of a food product's nutrition label (ingredients list and/or nutrition facts table).
-
-Your task:
-1. Identify the food product if possible.
-2. Extract nutritional values from the label.
-3. Normalize values to a **single serving** as stated on the label.
-4. If serving size is mentioned, use it exactly.
-5. If multiple values are shown (per 100g and per serving), prefer **per serving**.
-6. If any value is missing or unclear, estimate conservatively using common packaged food standards.
-7. Do NOT guess exotic or unrealistic numbers.
-8. If multiple food items are detected in the image,  provide clear reasoning for why each item is included or excluded.
-
-Focus on extracting the following nutrition values:
-- Calories (kcal)
-- Carbohydrates (grams)
-- Protein (grams)
-- Fats (grams)
-
-Rules:
-- Values must be realistic and humanly possible
-- Round all numeric values to **one decimal place**
-- If the image is unclear, partially visible, or unreadable, return best-effort estimates
-- Do NOT include explanations or additional text outside JSON
-
-Respond strictly in JSON.
+Locale: {locale}
 """
 
 NUTRITION_IMAGE_LOGGING_PROMPT = """
-You are a clinical nutrition assistant with multimodal understanding.
-
-You are given an image that contains one or more food items. 
-Analyze the image to identify all foods present.
-
-For each food item detected, estimate the following nutritional values:
-- calories
-- carbohydrates (grams)
-- protein (grams)
-- fats (grams)
-
-If portion sizes are unclear, assume a realistic human serving. If multiple food items are detected in the image, 
-provide clear reasoning for why each item is included or excluded.
-
-Respond strictly in JSON.
+Locale: {locale}
 """
 
+
 NUTRITION_TEXT_LOGGING_PROMPT = """
-You are a clinical nutrition assistant.
-
-Your task is to analyze a single food item entered by the user and estimate its nutritional content.
-
-Food Input:
-- Name: {food_name}
-
-Rules:
-- Estimate calories, carbohydrates, protein, and fats.
-- If portion and unit are provided, calculate nutrition proportionally.
-- Use common household and culturally realistic serving sizes when making assumptions.
-- Round all values to one decimal place.
-- Respond strictly in JSON and do not include any explanations or text outside the JSON.
-
+* User text: {food_name}
+* Locale: {locale}
 """
 
 NUTRITION_INSIGHTS_PROMPT = """
-You are a clinical nutrition insights assistant.
-
-Your task is to analyze the user's health status, weight goals, current meal plan,
-and logged nutrient intake, then generate:
-
-1. A **clear, actionable nutrition tip**
-2. High-level **insights** about how the user is doing overall
-3. **Alerts** if something needs immediate attention or adjustment
-
---------------------------------------------------
-User Health & Goal Context:
-{health_analysis}
-
+User Health & Goal Context: {health_analysis}
 Target Weight: {target_weight}
 Current Weight: {current_weight}
-Expected Weight Loss Rate (per week): {loosing_weight_rate}
-
---------------------------------------------------
-Current Meal Plan:
-{meal_plan}
-
-Recently Logged Food:
-{log_input}
-
-Logged Nutrient Intake:
-{current_nutrients}
-
---------------------------------------------------
-Your Responsibilities:
-
-Nutrition Tip:
-- Give ONE short, actionable recommendation
-- Focus on what the user should do next (adjust portions, swap foods, timing, hydration, etc.)
-- Keep it practical and achievable
-
-Insights:
-- Summarize how well the user is aligning with their health condition, weight-loss target, and expected rate
-- Compare meal plan vs logged nutrients
-- Mention trends like calorie surplus/deficit, macro imbalance, consistency or deviation from the plan
-
-Alerts:
-- Add alerts ONLY if needed (calorie intake significantly above target, meal plan not supporting desired weight-loss rate, repeated nutrient imbalance)
-- If everything looks fine, return an empty list
-
---------------------------------------------------
-Rules:
-- Do NOT repeat the meal plan verbatim
-- Do NOT give medical diagnoses
-- Be supportive, not judgmental
-- Be concise but insightful
+Expected Weight Loss Rate (per week): {weight_change_rate}
+Current Meal Plan: {meal_plan}
+Recently Logged Food: {log_input}
+Logged Nutrient Intake: {current_nutrients}
 """
-
-
-NUTRITION_TIP_AGENT_PROMPT = """
-You are a clinical nutrition assistant.
-
-Your task is to generate a **short, actionable nutrition tip** that reacts
-to the user's current health condition and recent meal plan.
-
-Health Analysis:
-{health_analysis}
-
-Recent Meal Plan Summary:
-{meal_plan}
-
-Rules:
-- The tip must be **specific and actionable**
-- It must directly address at least one symptom or concern
-- Avoid repeating the meal plan
-- Keep it concise (2–4 sentences)
-
-Respond strictly in JSON:
-
-{{
-  "nutrition_tip": "<short, actionable tip>",
-  "reasoning": "<why this tip helps given the health analysis>"
-}}
-"""
-
-
-#################################################
-################# PERSONA UPDATE ################
-#################################################
-
-
-
 
 MENSTRUATION_PERSONA_UPDATE_PROMPT = """
 ### SYSTEM IDENTITY

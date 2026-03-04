@@ -12,54 +12,69 @@ from services.ai_service.modules.enums import AgentName, AgentModuleEnum
 from services.ai_service.modules.nutrition.models import NutritionInputs
 from services.ai_service.modules.logging.models import (TextFoodLogInput, ImageFoodLogInput, InsightsInputs,
                                                        )
-from services.ai_service.modules.persona.models import (MenstruationPersonaUpdateInput, PregnancyPersonaUpdateInput,
-                                                       )
 from services.ai_service.resolvers.nutrition_resolver import NutritionInputResolver
-from services.ai_service.resolvers.nutrition_tip_resolver import NutritionTipInputResolver
-from pathlib import Path
-import json
+from services.ai_service.utils.system_prompts import AGENT_SYSTEM_PROMPTS
 
 logger = logging.getLogger("celery")
-IMAGE_LOGGING_JSON = Path("D:\\9DTechWork\\FemVerse-Nutrition\\services\\Tests\\data\\nutrition_insights_image_menustral_data.json")
-NUTRITION_LOGGING_JSON = Path("D:\\9DTechWork\\FemVerse-Nutrition\\services\\Tests\\data\\nutrition_insights_labels_menustral_data.json")
 
 class AgentsOrchestrator:
     def __init__(self):
-        llm_service = get_gemini_service()
+        self.llm_service = get_gemini_service()
         self.registry = {
             AgentModuleEnum.NUTRITION.value: {
                 AgentName.NUTRITION.value: {
-                    "agent": NutritionAgent(llm_service=llm_service),
+                    "agent": NutritionAgent(llm_service=self.llm_service),
                     "resolver": NutritionInputResolver(),
                 },
                 AgentName.NUTRITION_INSIGHTS.value: {
-                    "agent": NutritionInsightsAgent(llm_service=llm_service),
-                    "resolver": NutritionInputResolver(),
+                    "agent": NutritionInsightsAgent(llm_service=self.llm_service),
+                    "resolver": None,
                 },
                 AgentName.NUTRITION_TEXT_LOGGING.value: {
-                    "agent": NutritionTextLoggingAgent(llm_service=llm_service),
-                    "resolver": NutritionTipInputResolver(),
+                    "agent": NutritionTextLoggingAgent(llm_service=self.llm_service),
+                    "resolver": None,
                 },
                 AgentName.NUTRITION_IMAGE_LOGGING.value: {
-                    "agent": NutritionImageLoggingAgent(llm_service=llm_service),
-                    "resolver": NutritionTipInputResolver(),
+                    "agent": NutritionImageLoggingAgent(llm_service=self.llm_service),
+                    "resolver": None,
                 },
                 AgentName.NUTRITION_LABEL_IMAGE_LOGGING.value: {
-                    "agent": NutritionLabelImageLoggingAgent(llm_service=llm_service),
-                    "resolver": NutritionTipInputResolver(),
+                    "agent": NutritionLabelImageLoggingAgent(llm_service=self.llm_service),
+                    "resolver": None,
                 }
             },
             AgentModuleEnum.PERSONA.value: {
                 AgentName.MENSTRUATION_PERSONA_UPDATE.value: {
-                    "agent": MenstruationPersonaAgent(llm_service=llm_service),
+                    "agent": MenstruationPersonaAgent(llm_service=self.llm_service),
                     "resolver": None,  # Direct inputs only
                 },
                 AgentName.PREGNANCY_PERSONA_UPDATE.value: {
-                    "agent": PregnancyPersonaAgent(llm_service=llm_service),
+                    "agent": PregnancyPersonaAgent(llm_service=self.llm_service),
                     "resolver": None,  # Direct inputs only
                 },
             }
         }
+
+    def _resolve_cache_name(self, agent_name: str) -> Optional[str]:
+
+        system_prompt = AGENT_SYSTEM_PROMPTS.get(agent_name)
+
+        if not system_prompt:
+            logger.debug(f"[Orchestrator] Agent '{agent_name}' has no SYSTEM_PROMPT — skipping cache.")
+            return None
+
+        cache_name = self.llm_service.cache_registry.get_or_create(
+            display_name=agent_name,
+            system_instruction=system_prompt,
+        )
+
+        print("Currently created caches", self.llm_service.cache_registry.list_cached())
+        if not cache_name:
+           logger.warning(
+                f"[Orchestrator] Cache unavailable for '{agent_name}' — proceeding without cache."
+            )
+
+        return cache_name
 
     async def run_agents_for_module(
             self,
@@ -76,13 +91,18 @@ class AgentsOrchestrator:
         if agent not in self.registry[module]:
             return None, f"Agent {agent} not configured for module {module}"
 
+
         agent_entry = self.registry[module][agent]
         agent_instance = agent_entry["agent"]
+
         resolver = agent_entry.get("resolver")
+        cached_content_name = self._resolve_cache_name(agent)
+
+        print(cached_content_name)
 
         if direct_inputs:
             logger.info(f"Running {agent} with direct inputs")
-            result, error = await agent_instance.run(direct_inputs)
+            result, error = await agent_instance.run(direct_inputs, cached_content_name)
         else:
             if not user_id:
                 return None, "user_id required when direct_inputs not provided"
@@ -91,132 +111,9 @@ class AgentsOrchestrator:
 
             logger.info(f"Resolving inputs for {agent} module={module} user_id={user_id}")
             inputs = await resolver.resolve(user_id=user_id, date=date)
-            result, error = await agent_instance.run(**inputs)
+            result, error = await agent_instance.run(cached_content_name=cached_content_name, **inputs)
 
         if error:
             return result, error
 
         return result, error
-
-    # async def _generate_insights_from_text_logging(
-    #         self,
-    #         result: Dict[str, Any],
-    #         user_id: Optional[str],
-    #         date: Optional[int],
-    #         original_inputs: Optional[InsightsTextInputs]
-    # ) -> Dict[str, Any]:
-    #
-    #     if not result:
-    #         return {"food_nutrients": None, "insights": None}
-    #
-    #     original_inputs.current_nutrients = result
-    #
-    #     insights, insight_error = await self.run_agents_for_module(
-    #         module=AgentModuleEnum.NUTRITION.value,
-    #         agent=AgentName.NUTRITION_INSIGHTS.value,
-    #         user_id=user_id,
-    #         date=date,
-    #         direct_inputs=original_inputs
-    #     )
-    #
-    #     return {
-    #         "food_nutrients": result,
-    #         "insights": insights,
-    #         "insights_error": insight_error
-    #     }
-    #
-    # async def _generate_insights_from_image_logging(
-    #         self,
-    #         result: Dict[str, Any],
-    #         user_id: Optional[str],
-    #         date: Optional[int],
-    #         original_inputs: Optional[ImageFoodLogInput]
-    # ) -> Dict[str, Any]:
-    #     """Post-processor for image logging to generate insights"""
-    #
-    #     if not result or not result.get("foods"):
-    #         return {"foods": [], "total_nutrients": None, "insights": None}
-    #
-    #     # Calculate total nutrients
-    #     total_nutrients = {
-    #         "calories": sum(food.get("calories", 0) for food in result["foods"]),
-    #         "carbs": sum(food.get("carbs", 0) for food in result["foods"]),
-    #         "protein": sum(food.get("protein", 0) for food in result["foods"]),
-    #         "fats": sum(food.get("fats", 0) for food in result["foods"])
-    #     }
-    #
-    #     food_names = ", ".join(food.get("name", "Unknown") for food in result["foods"])
-    #
-    #     # Load dummy data for insights context
-    #     try:
-    #         with IMAGE_LOGGING_JSON.open("r", encoding='utf-8') as file:
-    #             all_dummy_cases = json.load(file)
-    #         dummy_body = InsightsImageInputs(**all_dummy_cases[0]) if all_dummy_cases else None
-    #     except Exception as e:
-    #         logger.warning(f"Failed to load dummy insights data: {e}")
-    #         dummy_body = InsightsImageInputs()
-    #
-    #     if dummy_body:
-    #         dummy_body.log_input.food_name = food_names
-    #         dummy_body.current_nutrients = total_nutrients
-    #
-    #     # Call insights agent
-    #     insights, insight_error = await self.run_agents_for_module(
-    #         module=AgentModuleEnum.NUTRITION.value,
-    #         agent=AgentName.NUTRITION_INSIGHTS.value,
-    #         user_id=user_id,
-    #         date=date,
-    #         direct_inputs=dummy_body
-    #     )
-    #
-    #     return {
-    #         "foods": result["foods"],
-    #         "total_nutrients": total_nutrients,
-    #         "insights": insights,
-    #         "insights_error": insight_error
-    #     }
-    #
-    # async def _generate_insights_from_label_logging(
-    #         self,
-    #         result: Dict[str, Any],
-    #         user_id: Optional[str],
-    #         date: Optional[int],
-    #         original_inputs: Optional[ImageFoodLogInput]
-    # ) -> Dict[str, Any]:
-    #     """Post-processor for nutrition label logging to generate insights"""
-    #
-    #     if not result:
-    #         return {"food_nutrients": None, "insights": None}
-    #
-    #     try:
-    #         with NUTRITION_LOGGING_JSON.open("r", encoding='utf-8') as file:
-    #             all_dummy_cases = json.load(file)
-    #         dummy_body = InsightsImageInputs(**all_dummy_cases[0]) if all_dummy_cases else None
-    #     except Exception as e:
-    #         logger.warning(f"Failed to load dummy insights data: {e}")
-    #         dummy_body = InsightsImageInputs()
-    #
-    #     if dummy_body:
-    #         dummy_body.log_input.food_name = result.get("food_name", "Unknown")
-    #         dummy_body.current_nutrients = {
-    #             "calories": result.get("calories", 0),
-    #             "fats": result.get("fats", 0),
-    #             "protein": result.get("protein", 0),
-    #             "carbs": result.get("carbs", 0)
-    #         }
-    #
-    #     current_nutrients = dummy_body.current_nutrients if dummy_body else {}
-    #
-    #     insights, insight_error = await self.run_agents_for_module(
-    #         module=AgentModuleEnum.NUTRITION.value,
-    #         agent=AgentName.NUTRITION_INSIGHTS.value,
-    #         user_id=user_id,
-    #         date=date,
-    #         direct_inputs=dummy_body
-    #     )
-    #
-    #     return {
-    #         "food_nutrients": current_nutrients,
-    #         "insights": insights,
-    #         "insights_error": insight_error
-    #     }
