@@ -12,6 +12,18 @@ from services.ai_service.modules.nutrition.models import (
 
 
 # ============== DAILY LOG INPUTS ==============
+class LifestyleAndConsumption(BaseModel):
+    """
+    Tracks daily food, hydration, sleep, and habits.
+    """
+    breakfast: Optional[str] = None
+    lunch: Optional[str] = None
+    dinner: Optional[str] = None
+    water_intake_liters: Optional[float] = None
+    alcohol_units: Optional[int] = None
+    caffeine_servings: Optional[int] = None
+    smoking_status: Optional[str] = None
+    sleephours: Optional[float] = None
 
 class MenstruationDailyLogInput(BaseModel):
     """
@@ -26,6 +38,7 @@ class MenstruationDailyLogInput(BaseModel):
     cycle_data: Optional[MenstrualCycleData] = None
     try_to_conceive: Optional[TryToConceiveData] = None
     user_logged_data: Optional[MenstrualUserLoggedData] = None
+    lifestyle_and_consumption: Optional[LifestyleAndConsumption] = None
 
 
 class PregnancyDailyLogInput(BaseModel):
@@ -40,6 +53,7 @@ class PregnancyDailyLogInput(BaseModel):
     BMI: Optional[float] = None
     pregnancy_data: Optional[PregnancyMetaData] = None
     user_logged_data: Optional[PregnancyUserLoggedData] = None
+    lifestyle_and_consumption: Optional[LifestyleAndConsumption] = None
 
 
 # ============== PERSONA SUB-STRUCTURES ==============
@@ -210,7 +224,7 @@ class MenstruationPersonaUpdateInput(BaseModel):
     Contains both the previous persona and today's daily log.
     """
     previous_persona: MenstruationPersona
-    daily_log: MenstruationDailyLogInput
+    daily_log: List[MenstruationDailyLogInput]
 
 
 class MenstruationPersonaUpdateOutput(BaseModel):
@@ -227,7 +241,7 @@ class PregnancyPersonaUpdateInput(BaseModel):
     Contains both the previous persona and today's daily log.
     """
     previous_persona: PregnancyPersona
-    daily_log: PregnancyDailyLogInput
+    daily_log: List[PregnancyDailyLogInput]
 
 class PregnancyPersonaUpdateOutput(BaseModel):
     """

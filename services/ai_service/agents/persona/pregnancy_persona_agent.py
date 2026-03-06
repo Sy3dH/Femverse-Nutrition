@@ -17,10 +17,7 @@ class PregnancyPersonaAgent(BaseAgent):
     Synthesizes daily pregnancy health data into a long-term health narrative.
     """
 
-    async def run(
-        self,
-        inputs: PregnancyPersonaUpdateInput,
-    ) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+    async def run(self, inputs: PregnancyPersonaUpdateInput, cached_content_name: Optional[str] = None) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
         """
         Update the pregnancy persona with today's daily log.
 
@@ -34,14 +31,15 @@ class PregnancyPersonaAgent(BaseAgent):
         try:
 
             # Use PromptBuilder to construct the final prompt
-            prompt = PromptBuilder.build_prompt(
+            user_prompt = PromptBuilder.build_prompt(
                 agent_name=AgentName.PREGNANCY_PERSONA_UPDATE.value,
                 data=inputs,
             )
 
             # Call LLM using default temperature and no explicit system prompt
             response, error = self.query_llm(
-                prompt=prompt,
+                prompt=user_prompt,
+                cached_content_name=cached_content_name,
                 output_schema=PregnancyPersonaUpdateOutput,
             )
 

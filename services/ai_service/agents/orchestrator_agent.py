@@ -14,6 +14,7 @@ from services.ai_service.modules.logging.models import (TextFoodLogInput, ImageF
                                                        )
 from services.ai_service.resolvers.nutrition_resolver import NutritionInputResolver
 from services.ai_service.utils.system_prompts import AGENT_SYSTEM_PROMPTS
+from services.ai_service.modules.persona.models import MenstruationPersonaUpdateInput, PregnancyPersonaUpdateInput
 
 logger = logging.getLogger("celery")
 
