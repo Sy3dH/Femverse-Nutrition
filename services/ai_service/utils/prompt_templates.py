@@ -1083,6 +1083,9 @@ MENSTRUATION_PERSONA_UPDATE_PROMPT = """
 
 ### TODAY'S DAILY LOG (JSON)
 {daily_log}
+
+### CHATBOT USER INPUTS (JSON)
+{chatbot_inputs}
 """
 
 PREGNANCY_PERSONA_UPDATE_PROMPT = """
@@ -1091,5 +1094,8 @@ PREGNANCY_PERSONA_UPDATE_PROMPT = """
 
 ### TODAY'S DAILY LOG (JSON)
 {daily_log}
+
+### CHATBOT USER INPUTS (JSON)
+{chatbot_inputs}
 """
 

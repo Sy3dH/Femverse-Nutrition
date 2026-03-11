@@ -25,6 +25,12 @@ class LifestyleAndConsumption(BaseModel):
     smoking_status: Optional[str] = None
     sleephours: Optional[float] = None
 
+class ChatbotInputs(BaseModel):
+    """
+    Chatbot memories for any additional information provided by the user.
+    """
+    chatbot_memories: List[str] = None
+
 class MenstruationDailyLogInput(BaseModel):
     """
     Daily log input for menstruation tracking.
@@ -225,6 +231,7 @@ class MenstruationPersonaUpdateInput(BaseModel):
     """
     previous_persona: MenstruationPersona
     daily_log: List[MenstruationDailyLogInput]
+    chatbot_inputs: Optional[ChatbotInputs] = None
 
 
 class MenstruationPersonaUpdateOutput(BaseModel):
@@ -242,6 +249,7 @@ class PregnancyPersonaUpdateInput(BaseModel):
     """
     previous_persona: PregnancyPersona
     daily_log: List[PregnancyDailyLogInput]
+    chatbot_inputs: Optional[ChatbotInputs] = None
 
 class PregnancyPersonaUpdateOutput(BaseModel):
     """
