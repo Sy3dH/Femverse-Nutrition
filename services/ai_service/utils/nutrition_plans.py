@@ -1,183 +1,56 @@
 # Base Plan Templates - Selected by User
 PLAN_TEMPLATES = {
-    "standard_balanced": """
-    Plan: Standard Balanced Plan
-    Goal: Maintain weight with balanced nutrition
-    Calories: Maintenance level (BMR × activity factor)
-    Macros: 30% protein, 40% carbs, 30% fats
-    Focus: General health, variety of whole foods, balanced meals
-    Principles: Include all food groups, colorful vegetables, whole grains, lean proteins, healthy fats
-    """,
+    "added_sugar_reset": "A structured 14-day reset focused specifically on eliminating added sugars to stabilize blood glucose patterns, reduce dependency on sweetened foods, and establish healthier eating rhythms. This program is for you if you experience frequent sugar cravings, energy crashes, or want a short-term reset to break high-sugar habits. Mild withdrawal symptoms like headaches or cravings may occur in the first few days. This program supports nutritional wellness and does not replace medical treatment. If you have diabetes or a metabolic condition, consult your healthcare provider before starting. Do's: Eat whole, unprocessed foods. Increase protein intake. Include fiber-rich meals. Read labels carefully. Stay well hydrated. Don'ts: Avoid sugary drinks. Avoid packaged snacks. Avoid artificial sweeteners. Don't skip meals. Don't binge after cravings.",
 
-    "weight_loss": """
-    Plan: Weight Loss Plan
-    Goal: Sustainable fat loss while preserving muscle
-    Calories: 20% deficit below maintenance
-    Macros: 35% protein, 35% carbs, 30% fats
-    Focus: High protein for satiety and muscle preservation, controlled portions, low-calorie dense foods
-    Principles: Lean proteins at every meal, high-fiber vegetables, moderate complex carbs, avoid liquid calories
-    Avoid: Processed foods, sugary snacks, high-calorie sauces
-    """,
+    "balanced_blood_sugar": "A sustainable 21-day program designed to establish long-term blood sugar balance through smart carbohydrate pairing, steady meal timing, and portion awareness. Unlike the reset program, this plan focuses on sustainability rather than elimination. This program is for you if you want stable daily energy without strict restriction. This program supports nutritional wellness and does not replace medical treatment. Do's: Pair carbs with protein. Focus on slow-digesting carbs. Eat balanced meals. Maintain consistent meal timing. Stay consistent. Don'ts: Avoid refined sugars. Avoid drinking calories. Avoid late-night desserts. Don't overeat fruits. Don't skip breakfast.",
 
-    "weight_gain": """
-    Plan: Weight Gain / High-Calorie Plan
-    Goal: Healthy weight gain or support high activity levels
-    Calories: 15-20% surplus above maintenance
-    Macros: 25% protein, 45% carbs, 30% fats
-    Focus: Nutrient-dense foods, calorie-rich whole foods, frequent meals
-    Principles: Nuts, nut butters, avocados, whole grains, dried fruits, smoothies with calories
-    Strategy: 5-6 meals per day, add healthy fats to meals, calorie-dense snacks
-    """,
+    "hormone_support": "A nutrient-dense plan focused on supporting healthy hormonal rhythms through balanced macronutrients, healthy fats, and blood sugar stability. This program does not treat endocrine disorders but supports overall hormonal wellness. This program is for you if you experience mood swings, mild PMS, or energy fluctuations and want nutritional support for hormonal balance. Consult your healthcare provider if you have a diagnosed hormonal disorder. Do's: Include healthy fats. Eat protein regularly. Add cruciferous vegetables. Prioritize sleep. Manage stress. Don'ts: Avoid processed foods. Avoid caffeine overload. Avoid large sugar spikes. Don't skip meals. Don't overexercise.",
 
-    "pcos_friendly": """
-    Plan: PCOS-Friendly Plan
-    Goal: Manage insulin levels, reduce inflammation, hormone balance
-    Calories: Based on weight goal (maintenance or deficit)
-    Macros: 30% protein, 35% carbs (low-GI only), 35% fats (healthy fats)
-    Focus: Low refined carbs/sugar, high fiber (25g+ daily), anti-inflammatory foods
-    Include: Leafy greens, fatty fish (omega-3), nuts, seeds, whole grains (quinoa, oats), berries, turmeric, cinnamon
-    Avoid: White bread, white rice, sugary foods, processed carbs, trans fats
-    Special: Chromium-rich foods, spearmint tea, inositol considerations
-    """,
+    "pcos_metabolic_support": "A low-glycemic nutrition program designed to support insulin sensitivity and metabolic balance in women diagnosed with PCOS. This program focuses on blood sugar stability and sustainable habits. This program is for you if you have insulin-resistant PCOS and want nutritional support alongside medical care. Always consult your healthcare provider for PCOS management. Do's: Choose low-GI foods. Include protein every meal. Stay hydrated. Track symptoms. Practice mindful eating. Don'ts: Avoid refined carbs. Avoid sugary snacks. Avoid stress eating. Don't skip meals. Don't extreme diet.",
 
-    "pregnancy_t1": """
-    Plan: Pregnancy Plan - First Trimester (Weeks 1-13)
-    Goal: Support early fetal development, manage nausea
-    Calories: Maintenance (no extra calories needed)
-    Macros: 25% protein, 45% carbs, 30% fats
-    Focus: Folate (600 mcg), B6, small frequent meals for nausea
-    Critical Nutrients: Folate/Folic acid, Iron (27mg), Calcium (1000mg), Protein (71g+), DHA (200-300mg)
-    Include: Leafy greens, fortified cereals, legumes, citrus, ginger, bland crackers
-    Avoid: Raw fish, deli meats, unpasteurized dairy, high-mercury fish, alcohol, excess caffeine
-    Nausea tips: Ginger tea, small meals, protein-rich snacks, avoid strong smells
-    """,
+    "pcos_inflammation_gut": "An anti-inflammatory, gut-focused nutrition plan designed for women with PCOS whose primary concerns include bloating, inflammation, or digestive discomfort. This program complements medical PCOS management but does not replace it. Do's: Add turmeric and ginger. Include omega-3 fats. Eat colorful vegetables. Stay hydrated. Support gut-friendly foods. Don'ts: Avoid fried foods. Avoid processed meats. Avoid excess sugar. Monitor gluten if sensitive. Don't eat irregularly.",
 
-    "pregnancy_t2": """
-    Plan: Pregnancy Plan - Second Trimester (Weeks 14-27)
-    Goal: Support rapid fetal growth, maintain maternal health
-    Calories: Maintenance + 300 kcal
-    Macros: 25% protein, 45% carbs, 30% fats
-    Focus: Iron, calcium, protein, DHA, vitamin D
-    Critical Nutrients: Iron (27mg), Calcium (1000mg), Protein (71g+), DHA (200-300mg), Vitamin D (600 IU)
-    Include: Lean meats, fortified dairy, fatty fish (salmon), dark leafy greens, eggs, legumes
-    Strategy: Iron + Vitamin C for absorption, calcium sources throughout day
-    """,
+    "cycle_sync_natural": "A phase-based nutrition plan aligning meals with menstrual phases to support energy, mood, and productivity. Best suited for women not using hormonal birth control. This program is for you if you want to optimize nutrition based on natural cycle patterns. Do's: Track your cycle. Prioritize iron during menstruation. Increase protein in luteal phase. Adjust activity levels. Eat according to phase. Don'ts: Don't force intense workouts during period. Avoid inflammatory foods. Avoid excessive caffeine. Don't ignore cravings. Don't skip breakfast.",
 
-    "pregnancy_t3": """
-    Plan: Pregnancy Plan - Third Trimester (Weeks 28-40)
-    Goal: Support final growth phase, prepare for delivery, prevent constipation
-    Calories: Maintenance + 450 kcal
-    Macros: 30% protein, 40% carbs, 30% fats
-    Focus: Iron, calcium, protein (80g+), fiber, DHA
-    Critical Nutrients: Iron, Calcium, Protein (80-100g), DHA, Vitamin K, Fiber (28g+)
-    Include: Red meat (iron), dairy, fatty fish, prunes, high-fiber foods, plenty of water
-    Strategy: Small frequent meals (digestion slows), prevent constipation with fiber + water
-    """,
+    "period_pain_support": "An anti-inflammatory nutrition plan designed to support reduced menstrual cramping and digestive comfort during periods. This program is for you if you experience painful periods and want nutritional support. It complements medical care. Do's: Eat warm, soothing meals. Include magnesium-rich foods. Drink herbal teas. Increase hydration. Add anti-inflammatory spices. Don'ts: Avoid excessive caffeine. Avoid salty snacks. Avoid high sugar intake. Don't skip hydration. Don't overeat processed foods.",
 
-    "postpartum": """
-    Plan: Postpartum / Lactation Plan
-    Goal: Support recovery, milk production (if breastfeeding), replenish nutrients
-    Calories: Maintenance + 500 kcal (if breastfeeding), Maintenance + 200 kcal (if not)
-    Macros: 25% protein, 40% carbs, 35% fats
-    Focus: High protein for healing, hydration (3L+ water), nutrient replenishment
-    Critical Nutrients: Protein (71g+), Calcium (1000mg), Iron, Vitamin D, Omega-3, B vitamins, Choline
-    Include: Lean proteins, oats (lactation), leafy greens, nuts, seeds, fatty fish, hydrating foods
-    Lactation support: Oats, flaxseed, fennel, fenugreek, adequate hydration
-    Recovery: Iron-rich foods (blood loss recovery), protein for tissue repair
-    """,
+    "pms_bloating_water_retention": "A targeted nutrition plan focused specifically on reducing water retention and digestive bloating in the luteal phase. This program is for you if bloating and puffiness are your primary PMS concerns. Do's: Eat potassium-rich foods. Choose low-sodium meals. Add probiotics. Stay hydrated. Track triggers. Don'ts: Avoid salty snacks. Avoid carbonated drinks. Avoid sugar. Don't eat too fast. Don't eat late-night.",
 
-    "preconception": """
-    Plan: Pre-Conception Plan
-    Goal: Optimize fertility, prepare body for pregnancy
-    Calories: Maintenance (achieve healthy BMI if needed)
-    Macros: 30% protein, 40% carbs, 30% fats
-    Focus: Folate, iron, antioxidants, healthy fats, blood sugar balance
-    Critical Nutrients: Folate (400-800 mcg), Iron, Zinc, Vitamin D, CoQ10, Omega-3, Antioxidants
-    Include: Leafy greens, berries, nuts, seeds, fatty fish, whole grains, legumes, colorful vegetables
-    For men: Zinc, selenium, antioxidants (for sperm health)
-    Avoid: Trans fats, excess alcohol, high-mercury fish, processed foods
-    """,
+    "iron_support": "A nutrient-focused plan designed to support healthy iron intake through food. Iron levels should be tested before supplementation. This program is for you if you experience fatigue or heavy periods and want to support iron status nutritionally. Do's: Pair iron with vitamin C. Include leafy greens. Add lentils and beans. Stay hydrated. Monitor symptoms. Don'ts: Avoid tea after meals. Avoid calcium with iron meals. Don't self-supplement without testing. Avoid processed foods. Don't skip iron-rich meals.",
 
-    "gluten_free": """
-    Plan Modifier: Gluten-Free (applies to any base plan)
-    Restriction: No gluten (wheat, barley, rye, contaminated oats)
-    Replacements: Rice, quinoa, certified GF oats, corn, buckwheat, millet, almond flour, coconut flour
-    Focus: Naturally gluten-free whole foods (vegetables, fruits, proteins, dairy)
-    Watch for: Hidden gluten in sauces, seasonings, processed foods
-    Include: GF whole grains, naturally GF proteins, plenty of vegetables and fruits
-    """,
+    "fertility_support": "A nutrient-dense program designed for women actively trying to conceive. Focuses on supporting cellular health, ovulation patterns, and reproductive readiness. Best started 3–6 months before conception. Consult your healthcare provider for fertility concerns. Do's: Add folate-rich foods. Include omega-3 fats. Eat antioxidants. Stay hydrated. Manage stress. Don'ts: Avoid alcohol. Avoid trans fats. Avoid excessive sugar. Don't skip meals. Don't rely on supplements alone.",
 
-    "vegetarian": """
-    Plan Modifier: Vegetarian (applies to any base plan)
-    Restriction: No meat, poultry, fish (may include eggs and dairy if lacto-ovo)
-    Protein Sources: Legumes (beans, lentils), tofu, tempeh, eggs, dairy, Greek yogurt, cottage cheese, quinoa
-    Critical Nutrients: B12 (fortified foods or supplement), Iron (with Vitamin C), Zinc, Omega-3 (flax, chia, walnuts)
-    Include: Variety of plant proteins, iron-rich plants + citrus, nuts, seeds
-    Strategy: Combine incomplete proteins (rice + beans), fortified plant milks
-    """,
+    "preconception_nutrient_optimization": "A preparation-focused nutrition plan designed to build strong nutrient reserves before actively trying to conceive. This program emphasizes iron, folate, gut health, and hormonal readiness over a 6–12 month preparation window. This program is for you if you are planning pregnancy in the near future but are not yet actively trying. It supports wellness and does not replace medical or fertility treatment. Do's: Add whole grains. Increase folate and iron. Eat colorful vegetables. Maintain hydration. Prioritize sleep. Don'ts: Avoid processed foods. Avoid excessive caffeine. Avoid sugary snacks. Don't skip meals. Don't ignore fatigue.",
 
-    "vegan": """
-    Plan Modifier: Vegan (applies to any base plan)
-    Restriction: No animal products (meat, dairy, eggs, honey)
-    Protein Sources: Legumes, tofu, tempeh, seitan, edamame, quinoa, nuts, seeds, plant-based protein powders
-    Critical Nutrients: B12 (supplement required), Iron + Vitamin C, Calcium (fortified), Vitamin D, Zinc, Omega-3 (algae-based), Iodine
-    Include: Fortified plant milks, nutritional yeast (B12), varied plant proteins, dark leafy greens
-    Strategy: Supplement B12, combine proteins, use fortified foods, consider algae omega-3
-    """,
+    "pregnancy_t1_support": "A first-trimester nutrition plan designed to support early fetal development, manage nausea, and stabilize energy. Focuses on folate, protein intake, and gentle digestion strategies. This program complements obstetric care and should be coordinated with your OB-GYN. This program is for you if you are in your first trimester and experiencing nausea or appetite changes. Do's: Eat small frequent meals. Prioritize folate-rich foods. Add gentle protein. Stay hydrated. Drink ginger tea. Don'ts: Avoid heavy greasy meals. Avoid unsafe/raw foods. Avoid caffeine excess. Don't skip breakfast. Don't lie down immediately after eating.",
 
-    "diabetic_low_gi": """
-    Plan: Diabetic-Friendly / Low-GI Plan
-    Goal: Stable blood sugar, prevent spikes, manage diabetes/prediabetes
-    Calories: Based on weight goal
-    Macros: 25% protein, 40% carbs (low-GI only), 35% fats
-    Focus: Low glycemic index foods, high fiber (30g+), consistent carb portions per meal
-    Include: Non-starchy vegetables, whole grains (oats, quinoa, barley), legumes, nuts, lean proteins
-    Avoid: White bread, white rice, sugary foods, fruit juices, high-GI carbs
-    Strategy: Pair carbs with protein/fat, consistent meal timing, portion control
-    Monitoring: Track carb intake per meal (45-60g typical)
-    """,
+    "pregnancy_t2_growth": "A second-trimester nutrition program focused on fetal growth, maternal energy, and anemia prevention. Emphasizes iron, calcium, protein, and balanced blood sugar. Designed to complement obstetric supervision. Do's: Add iron-rich meals. Include lean proteins. Eat calcium-rich foods. Stay moderately active. Drink plenty of water. Don'ts: Avoid sugary snacks. Avoid processed meats. Avoid overeating. Avoid caffeine excess. Don't ignore hunger cues.",
 
-    "wedding_prep": """
-    Plan: Wedding Prep Plan (Time-Sensitive Weight Loss)
-    Goal: Sustainable weight loss with skin health focus for special event
-    Calories: 15-20% deficit (more aggressive than standard weight loss)
-    Macros: 35% protein, 35% carbs, 30% fats
-    Focus: Fat loss, muscle preservation, glowing skin, energy levels
-    Skin Health: Vitamin C (collagen), Vitamin E, Omega-3 (anti-inflammatory), hydration (3L+ water)
-    Include: Berries, citrus, fatty fish, nuts, leafy greens, lean proteins, colorful vegetables
-    Timeline Strategy: 
-    - 3+ months out: Moderate deficit, establish habits
-    - 1-3 months: Maintain deficit, focus on consistency
-    - 2 weeks before: Increase water, reduce bloating foods (salt, processed)
-    Avoid: Crash dieting, extreme restrictions, alcohol (bloating)
-    """,
+    "pregnancy_t3_preparation": "A third-trimester nutrition plan supporting final fetal growth, swelling management, digestion, and preparation for labor. Emphasizes fiber, hydration, and magnesium-rich foods. Designed to complement OB care. Do's: Eat fiber-rich meals. Add magnesium-rich foods. Stay hydrated. Include omega-3 fats. Monitor salt intake. Don'ts: Avoid excessive salt. Avoid heavy late-night meals. Avoid sugary drinks. Don't overexert. Don't skip hydration.",
 
-    "exam_brain_boost": """
-    Plan: Exam Energy / Brain Boost Plan
-    Goal: Optimize cognitive function, sustained energy, focus, memory
-    Calories: Maintenance
-    Macros: 25% protein, 45% carbs (complex), 30% fats
-    Focus: Omega-3 (DHA for brain), B vitamins, antioxidants, sustained energy (no crashes)
-    Brain Foods: Fatty fish (salmon, sardines), walnuts, blueberries, dark chocolate, eggs, avocado
-    Include: Whole grains, leafy greens, berries, nuts, seeds, green tea, dark chocolate (70%+)
-    Energy Strategy: Complex carbs for steady glucose, avoid sugar crashes
-    Study Snacks: Nuts + berries, hummus + veggies, Greek yogurt + walnuts, dark chocolate
-    Hydration: Critical for focus (dehydration impairs cognition)
-    Avoid: Energy drinks (crash), high sugar (blood sugar swings), heavy meals (drowsiness)
-    """,
+    "gestational_diabetes_support": "A low-glycemic meal structure designed to support stable blood glucose during pregnancy. This program must be followed under supervision of your OB-GYN or endocrinologist. It complements medical management and glucose monitoring. Do's: Pair carbs with protein. Eat low-GI foods. Choose smaller frequent meals. Track glucose levels. Add fiber. Don'ts: Avoid sugary snacks. Avoid fruit juices. Avoid refined carbs. Don't skip meals. Avoid desserts.",
 
-    "high_protein_athletic": """
-    Plan: High-Protein / Athletic Performance Plan
-    Goal: Muscle building, recovery, athletic performance
-    Calories: Based on activity level (maintenance to surplus)
-    Macros: 40% protein, 35% carbs, 25% fats
-    Protein Target: 1.6-2.2g per kg body weight
-    Focus: Protein timing (post-workout), recovery, electrolytes, energy for training
-    Include: Lean meats, fish, eggs, Greek yogurt, protein powder, quinoa, sweet potatoes
-    Timing: Protein within 30-60 min post-workout, carbs around training
-    Pre-Workout: Carbs + moderate protein (2-3 hours before)
-    Post-Workout: Protein + carbs (3:1 or 4:1 ratio)
-    Hydration: Electrolytes during/after intense exercise
-    Recovery: Anti-inflammatory foods (berries, fatty fish, turmeric)
-    """
+    "postpartum_recovery": "A recovery-focused nutrition plan designed to support tissue repair, energy restoration, and hormonal stabilization in the first year postpartum. This program complements postnatal medical care. Do's: Increase protein intake. Add iron-rich foods. Stay hydrated. Rest when possible. Eat nourishing whole meals. Don'ts: Avoid crash dieting. Avoid excessive caffeine. Avoid processed snacks. Don't skip meals. Don't neglect hydration.",
+
+    "breastfeeding_support": "A hydration-focused and nutrient-dense plan designed to support milk production and maternal energy. Milk supply concerns should be discussed with a lactation consultant. This program supports breastfeeding wellness but does not replace medical advice. Do's: Drink 8–12 glasses of water. Eat protein regularly. Keep healthy snacks available. Eat balanced meals. Rest when possible. Don'ts: Avoid caffeine overload. Avoid alcohol. Don't skip meals. Avoid under-eating. Avoid heavily processed foods.",
+
+    "thyroid_nutrition_support": "A nutrition program designed to support metabolic balance in individuals with diagnosed thyroid conditions. Must be followed under medical supervision. Focuses on selenium intake, protein, and anti-inflammatory foods. Do's: Include selenium-rich foods. Eat adequate protein. Add anti-inflammatory foods. Prioritize rest. Monitor symptoms. Don'ts: Avoid excessive soy. Consider gluten reduction if sensitive. Avoid high sugar intake. Don't skip meals. Don't self-adjust medication.",
+
+    "sustainable_weight_management": "A gradual, balanced nutrition plan focused on sustainable fat loss and metabolic stability without extreme restriction. This program is for you if you want steady weight changes while maintaining hormonal balance. Do's: Eat protein every meal. Add fiber. Stay hydrated. Practice portion awareness. Stay consistent. Don'ts: Avoid fad diets. Avoid skipping meals. Avoid overexercise. Avoid sugary snacks. Don't stress-eat.",
+
+    "menopause_strength_balance": "A menopause-focused plan supporting hormonal transitions, bone health, muscle preservation, and hot flash management. This program is for women in perimenopause or menopause seeking nutritional stability. Do's: Add calcium and vitamin D. Include plant-based protein. Add omega-3 fats. Eat leafy greens. Hydrate well. Don'ts: Avoid excessive caffeine. Avoid excess alcohol. Avoid processed foods. Avoid high sugar intake. Don't ignore stress.",
+
+    "endometriosis_inflammation_support": "A deeply anti-inflammatory nutrition plan designed to support women diagnosed with endometriosis by reducing systemic inflammation and supporting digestive comfort. This program complements medical treatment and pain management strategies but does not replace them. This program is for you if you experience endometriosis-related pelvic pain and want nutritional support alongside clinical care. Do's: Include omega-3 rich foods. Eat anti-inflammatory vegetables. Add turmeric and ginger. Stay hydrated. Track flare-up triggers. Don'ts: Avoid highly processed foods. Monitor dairy if symptoms worsen. Limit excess red meat. Avoid excessive caffeine. Don't ignore symptom patterns.",
+
+    "egg_health_antioxidant": "A fertility-focused nutrition plan designed to support cellular health and antioxidant intake linked to egg health. Best suited for women actively trying to conceive or preparing for fertility treatments. This program supports reproductive wellness but does not replace fertility treatment or medical care. Do's: Add antioxidant-rich foods. Include omega-3 fats. Prioritize folate and B-vitamins. Stay hydrated. Manage stress. Don'ts: Avoid alcohol. Avoid trans fats. Avoid excessive sugar. Don't skip meals. Avoid smoking exposure.",
+
+    "pms_mood_craving_support": "A hormone-supportive nutrition plan specifically focused on emotional PMS symptoms such as irritability, cravings, and mood fluctuations in the luteal phase. This program is for you if emotional symptoms are your primary PMS concern rather than bloating or pain. Do's: Add magnesium-rich foods. Include whole grains. Eat lean proteins. Drink calming herbal teas. Track emotional triggers. Don'ts: Avoid high sugar intake. Avoid excessive caffeine. Avoid salty snacks. Don't skip meals. Don't stay dehydrated.",
+
+    "cycle_regularity_support": "A balanced nutrition program designed to support consistent ovulatory patterns and cycle rhythm through stable blood sugar, adequate micronutrients, and stress awareness. This program does not replace medical evaluation for irregular periods caused by PCOS, thyroid disorders, or other conditions. This program is for you if you experience mild cycle irregularity and want nutritional consistency. Do's: Eat balanced meals. Add vitamin D and omega-3. Include B-vitamins. Prioritize sleep. Track cycles. Don'ts: Avoid extreme dieting. Avoid processed foods. Don't skip breakfast. Avoid stress overload. Don't overexercise.",
+
+    "stress_sleep_reset": "A calming nutrition plan focused on supporting nervous system balance, lowering cortisol patterns, and improving sleep quality through magnesium-rich foods, blood sugar stability, and evening meal timing. This program is for you if stress and poor sleep are affecting your energy and mood. Do's: Add magnesium-rich meals. Drink warm herbal teas. Eat lighter evening meals. Maintain a sleep routine. Practice mindfulness. Don'ts: Avoid caffeine late in the day. Avoid heavy night meals. Avoid excess sugar. Don't overeat at night. Avoid screen exposure before bed.",
+
+    "gut_comfort_reset": "A short-term, digestion-focused reset plan designed to reduce bloating, support gut motility, and improve digestive awareness. This plan is not intended to diagnose or treat IBS, SIBO, or medical gastrointestinal disorders. This program is for you if you experience frequent bloating or digestive discomfort and want to identify dietary triggers. Do's: Add fermented foods. Increase fiber gradually. Stay hydrated. Chew food slowly. Drink ginger or peppermint tea. Don'ts: Avoid processed foods. Avoid carbonated drinks. Avoid artificial sweeteners. Don't eat too fast. Don't overconsume dairy.",
+
+    "glow_skin_health": "A nutrient-dense nutrition program designed to support skin clarity through gut health, hydration, and anti-inflammatory foods. This program supports skin wellness but does not replace dermatological treatment. This program is for you if you want to support clearer skin through nutritional balance. Do's: Add vitamin C-rich foods. Include omega-3 fats. Stay hydrated. Add zinc-rich foods. Support gut-friendly meals. Don'ts: Avoid refined sugar. Avoid fried foods. Consider reducing dairy if acne-prone. Don't skip hydration. Avoid highly processed foods.",
 }
