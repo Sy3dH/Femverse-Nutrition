@@ -1054,17 +1054,20 @@ User State:
 """
 
 NUTRITION_LABEL_IMAGE_PROMPT = """
-Locale: {locale}
+* lang: {lang}
+* timezone: {timezone}
 """
 
 NUTRITION_IMAGE_LOGGING_PROMPT = """
-Locale: {locale}
+* lang: {lang}
+* timezone: {timezone}
 """
 
 
 NUTRITION_TEXT_LOGGING_PROMPT = """
 * User text: {food_name}
-* Locale: {locale}
+* lang: {lang}
+* timezone: {timezone}
 """
 
 NUTRITION_INSIGHTS_PROMPT = """

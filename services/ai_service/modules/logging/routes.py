@@ -45,19 +45,13 @@ async def nutrition_text_logging(
 @logging_router.post("/nutrition_image_logging")
 async def nutrition_image_logging(
         image: UploadFile = File(...),
-        body: Optional[str] = Form(None),
         user_id: Optional[str] = Form(None),
         date: Optional[int] = Form(None),
+        lang: str = Form(...),
+        timezone: str = Form(...),
 ):
     try:
-        if body:
-            try:
-                body_data = json.loads(body)
-                extra_input = ImageExtraInput(**body_data)
-            except json.JSONDecodeError:
-                extra_input = ImageExtraInput(locale=body)
-        else:
-            extra_input = ImageExtraInput()
+        extra_input = ImageExtraInput(lang=lang, timezone=timezone)
 
         direct_inputs = ImageFoodLogInput(
             image_content=await image.read(),
@@ -87,19 +81,13 @@ async def nutrition_image_logging(
 @logging_router.post("/nutrition_label_image_logging")
 async def nutrition_label_image_logging(
         image: UploadFile = File(...),
-        body: Optional[str] = Form(None),
-        user_id: Optional[str] = None,
-        date: Optional[int] = None,
+        user_id: Optional[str] = Form(None),
+        date: Optional[int] = Form(None),
+        lang: str = Form(...),
+        timezone: str = Form(...),
 ):
     try:
-        if body:
-            try:
-                body_data = json.loads(body)
-                extra_input = ImageExtraInput(**body_data)
-            except json.JSONDecodeError:
-                extra_input = ImageExtraInput(locale=body)
-        else:
-            extra_input = ImageExtraInput()
+        extra_input = ImageExtraInput(lang=lang, timezone=timezone)
 
         direct_inputs = ImageFoodLogInput(
             image_content=await image.read(),
@@ -125,6 +113,7 @@ async def nutrition_label_image_logging(
     except Exception as e:
         logger.exception(f"Unexpected error in nutrition_label_image_logging for user {user_id}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
 
 @logging_router.post("/add_food")
 async def add_food(
