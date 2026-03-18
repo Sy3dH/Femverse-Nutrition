@@ -71,8 +71,6 @@ class PromptBuilder:
         template = _get_prompt_template(agent_name=agent_name)
         context = _build_prompt_context(data=data)
 
-        print("context", context)
-
         try:
             return template.format(**context)
         except KeyError as e:

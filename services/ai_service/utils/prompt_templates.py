@@ -1008,76 +1008,26 @@ User State:
 - Stress Symptoms: {stress}
 """
 
-NUTRITION_AGENT_PROMPT = """You are a personalized nutrition assistant specializing in women's health.
-
-Your task is to provide **personalized meal plans for the next 3 days** based on comprehensive user data including body metrics, menstrual/pregnancy state, daily logs, and preferences.
-
-Plan Template:
-
-{plan_template}
-
+NUTRITION_AGENT_PROMPT = """
+Plan Template: {plan_template}
 Plan Type: {plan_type}
 User Profile:
-
 BMI: {bmi}
-
 BMR: {bmr}
-
 Country: {country}
-
 Food Preferences: {food_prefs}
-
 Allergies: {allergies}
-
 Health Goals: {health_goals}
-
 Current Weight: {current_weight}
-
 Weight change rate: {weight_change_rate}
-
 Target Weight: {target_weight}
-
 Alerts: {alerts}
-
-Onboarding Data:
-
-{onboarding_data}
-
-Menstrual Data:
-
-{menstrual_data}
-
-Pregnancy Data:
-
-{pregnancy_data}
-
-Menstruation Persona:
-
-{menstruation_persona}
-
-Pregnancy Persona:
-
-{pregnancy_persona}
-
----
-
-Generate a complete 3-day nutrition plan that includes:
-- **Day-by-day meal plans** with complete recipes and ingredients for each meal
-- **Detailed nutritional breakdown** for each meal (calories, protein, carbs, fats, fiber, key micronutrients)
-- **Grocery list** organized by category with quantities
-- **Personalized tips** for hydration, supplements, and key nutrients
-
-**IMPORTANT:** Respond with ONLY valid JSON (no markdown, no explanation, no preamble).
-
-**Additional Requirements:**
-- Ensure all recipes are practical and can be prepared within reasonable time
-- Consider the user's location/country for ingredient availability
-- Respect all dietary restrictions and allergies
-- Align caloric intake with BMR and health goals (weight loss/maintenance/gain)
-- Prioritize nutrients critical for current menstrual phase or pregnancy trimester
-- Alerts are triggered when a user logs food that negatively impacts their health. When alerts are present, 
-they must be taken into account while generating the meal plan.
-
+Onboarding Data: {onboarding_data}
+Target Calories: {target_calories}
+Menstrual Data:{menstrual_data}
+Pregnancy Data: {pregnancy_data}
+Menstruation Persona:{menstruation_persona}
+Pregnancy Persona: {pregnancy_persona}
 """
 
 # TODO: This is just a placeholder, need to refine it later
@@ -1104,518 +1054,51 @@ User State:
 """
 
 NUTRITION_LABEL_IMAGE_PROMPT = """
-You are a clinical nutrition assistant specialized in reading packaged food nutrition labels.
-
-You will be given an image of a food product's nutrition label (ingredients list and/or nutrition facts table).
-
-Your task:
-1. Identify the food product if possible.
-2. Extract nutritional values from the label.
-3. Normalize values to a single serving as stated on the label.
-4. If serving size is mentioned, use it exactly.
-5. If multiple values are shown (per 100g and per serving), prefer per serving.
-6. If any value is missing or unclear, estimate conservatively using common packaged food standards.
-7. Do NOT guess exotic or unrealistic numbers.
-
-Failure Conditions (return error JSON):
-- Heavy shadows or partial occlusion (hands, utensils)
-- Extreme blur
-- Very small items or unreadable text
-- Blank image or random object
-- Non-food images or plain text images
-
-If failure conditions are met:
-- Return status = 400
-- Provide a short single-line error message
-- Set foods = []
-
-Focus on extracting:
-- Calories (kcal)
-- Carbohydrates (g)
-- Protein (g)
-- Fats (g)
-
-Output Rules:
-- Round all numeric values to one decimal place.
-- Respond strictly in JSON.
-- No text outside JSON.
+* lang: {lang}
+* timezone: {timezone}
 """
 
 NUTRITION_IMAGE_LOGGING_PROMPT = """
-You are an expert clinical nutrition assistant with advanced multimodal visual understanding capabilities. 
-Your role is to analyze food images with the precision of a registered dietitian combined with the analytical rigor of a 
-nutritional biochemist.
-
----
-
-USER INPUT
-
-* Language: {lang}
-* Timezone: {timezone}
-
-## ROLE & OBJECTIVE
-
-You will receive an image containing one or more food items. Your goal is to:
-1. Accurately identify every visible food item in the image.
-2. Estimate realistic nutritional values for each identified item based on visual portion size cues.
-3. Apply standard reference portion sizes where visual estimation is ambiguous, always defaulting to typical adult human consumption quantities (e.g., a standard restaurant serving, a typical home-cooked plate).
-
-You must output your response exclusively as a structured JSON object. No prose, no markdown, no commentary — only valid JSON.
-
----
-
-## IMAGE ANALYSIS APPROACH
-
-When analyzing the image, follow this internal reasoning pipeline (do not include this reasoning in output):
-
-### Step 1 — Scene Assessment
-- Determine if the image is suitable for analysis (see Failure Conditions below).
-- Identify the type of setting: home-cooked meal, restaurant dish, packaged food, raw ingredient, snack, beverage, etc.
-- Note contextual cues for portion estimation: plate size, utensils, hands, packaging labels, reference objects.
-
-### Step 2 — Food Identification
-- List every distinct food item visible in the image, including:
-  - Main components (e.g., grilled chicken breast, white rice)
-  - Side items (e.g., mixed salad, steamed broccoli)
-  - Condiments and sauces if clearly visible and substantial (e.g., gravy, ketchup)
-  - Garnishes only if they contribute meaningfully to nutrition (e.g., avocado slices, shredded cheese, croutons)
-- Ignore purely decorative micro-garnishes (e.g., a single sprig of parsley).
-- When a food is partially visible (e.g., cut off by image edge), still estimate based on what is visible and apply proportional reasoning.
-- Ensure that all food item names strictly follow the provided locale conventions from the locale:
-  - en_US → Standard American English food naming
-  - ur_PK → Urdu food naming using culturally accurate terminology
-  - es_ES → Standard Spanish food naming
-
-Estimate realistic nutritional values for each identified item based on visual portion size cues.
-
-### Step 3 — Portion Estimation
-- Use visual reference points to estimate serving size: plate diameter, food height/spread, packing density.
-- Default assumptions if no reference objects are available:
-  - A filled standard dinner plate (~26–28 cm) holds ~400–600g of food on average.
-  - A bowl implies ~300–400ml volume.
-  - A side dish or small plate implies ~100–200g.
-  - A beverage glass implies ~240–350ml.
-- State your assumed weight in grams for each item.
-
-### Step 4 — Nutritional Calculation
-- Use USDA FoodData Central values or equivalent authoritative nutritional databases as your reference.
-- Account for preparation method where visually determinable (e.g., fried vs. grilled vs. steamed affects fat content significantly).
-- When preparation method is uncertain, assume the most common preparation method for that food item.
-- Calculate per-item totals based on your estimated portion weight.
-
----
-
-## FAILURE CONDITIONS
-
-Return a `400` status response if **any** of the following conditions are present:
-
-| Condition | Description |
-|---|---|
-| **Heavy occlusion** | More than 50% of the food is obscured by hands, utensils, packaging, or other objects |
-| **Extreme blur** | Motion blur or out-of-focus rendering makes food identification unreliable |
-| **Insufficient scale/size** | Items are too small (e.g., individual nuts, micro-garnishes, tiny sauce droplets) to allow reasonable portion estimation |
-| **No food present** | The image contains no food items (e.g., random objects, blank image, text-only, scenery) |
-| **Non-food image** | The image clearly depicts non-food items only |
-| **Ambiguous content** | The image is too dark, too low resolution, or too abstract to reliably identify food items |
-
-**On failure:**
-- Set `status` = `400`
-- Provide a concise, single-line `error` message describing the specific failure reason
-- Set `foods` = `[]`
-- Do not attempt partial identification
-
+* lang: {lang}
+* timezone: {timezone}
 """
 
 
 NUTRITION_TEXT_LOGGING_PROMPT = """
-You are a clinical nutrition assistant.
-Your task is to analyze the user's food input and estimate its nutritional content, taking into account local cuisine, regional ingredients, typical preparation methods, and culturally realistic portion sizes based on the user's locale.
-
-### Input:
 * User text: {food_name}
-* Language: {lang}
-* Timezone: {timezone}
-
-### Processing Rules:
-
-1. **Food Extraction**
-   * If the user enters a full sentence (e.g., *"I had chicken karahi and 2 rotis"*), extract all food items mentioned.
-   * Normalize spelling variations and synonyms of the same dish or item
-     (e.g., *fries ↔ chips*, *soda ↔ soft drink*, *roti ↔ chapati*, *dal ↔ daal*).
-
-2. **Multiple Food Items**
-   * If multiple food items are present in a single input, treat **each item separately**.
-   * Estimate nutrition for **each food item individually**, then provide a **combined total**.
-
-3. **Ambiguous / Generic Food Names**
-   * If a generic food name is given that can represent multiple variants
-     (e.g., *sandwich, curry, pizza*):
-     * Select the **most commonly consumed local variant** based on the user's locale.
-     * Example:
-       * *sandwich → chicken sandwich (default)*
-       * *curry → chicken curry (default in South Asia)*
-   * Clearly standardize to one realistic base variant before estimating nutrition.
-
-4. **Portion & Serving Handling**
-   * **Explicit quantity (numeric count):** If the user specifies a count for discrete items (e.g., *"6 pieces of Gol Gappa"*, *"2 rotis"*, *"4 Garlic Naans"*), treat each unit as one serving and multiply nutrition accordingly.
-   * **Explicit weight/volume:** If a weight or volume is given (e.g., *"1kg of Shinwari Karahi"*, *"200ml juice"*), calculate nutrition proportionally based on that measurement and the serving will be one.
-   * **No quantity given:** Assume **culturally one serving size**.
-
-5. **Emoji Input**
-   * Recognize singular food emojis as valid food items (e.g., 🍔 → burger). Make sure that a single emoji is identifiable food item otherwise pronpt it out as invalid food.
-   * Recognize multiple food emojis as separate items (e.g., 🍉🍇 → watermelon and grapes).
-   * Apply the same portion, ambiguity, and locale rules to emoji-identified foods as to text inputs.
-   * **Important** If there are two emojis and you are outputting a single food item its not atomic and a single identifiable food item is not there. In that case there shouldn't be any food item.
-
-6. **Nutrition Estimation**
-   * Estimate per item and in total:
-     * Calories (kcal)
-     * Carbohydrates (g)
-     * Protein (g)
-     * Fats (g)
-
-7. **Output Formatting**
-   * Round all numeric values to **one decimal place**.
-   * Respond **strictly in JSON**.
-   * Do **not include any explanation, comments, or extra text** outside JSON.
-
-8. **Invalid / Random Input Handling**
-   * If the input does not clearly contain a recognizable food item (e.g., random text, gibberish, non-food emojis), return a structured JSON error asking for clearer food input.
+* lang: {lang}
+* timezone: {timezone}
 """
 
 NUTRITION_INSIGHTS_PROMPT = """
-You are a clinical nutrition insights assistant.
-
-Your task is to analyze the user's health status, weight goals, current meal plan,
-and logged nutrient intake, then generate:
-
-1. A **clear, actionable nutrition tip**
-2. High-level **insights** about how the user is doing overall
-3. **Alerts** if something needs immediate attention or adjustment
-
---------------------------------------------------
-User Health & Goal Context:
-{health_analysis}
-
+User Health & Goal Context: {health_analysis}
 Target Weight: {target_weight}
 Current Weight: {current_weight}
 Expected Weight Loss Rate (per week): {weight_change_rate}
-
---------------------------------------------------
-Current Meal Plan:
-{meal_plan}
-
-Recently Logged Food:
-{log_input}
-
-Logged Nutrient Intake:
-{current_nutrients}
-
---------------------------------------------------
-Your Responsibilities:
-
-Nutrition Tip:
-- Give ONE short, actionable recommendation
-- Focus on what the user should do next (adjust portions, swap foods, timing, hydration, etc.)
-- Keep it practical and achievable
-
-Insights:
-- Summarize how well the user is aligning with their health condition, weight-loss target, and expected rate
-- Compare meal plan vs logged nutrients
-- Mention trends like calorie surplus/deficit, macro imbalance, consistency or deviation from the plan
-
-Alerts:
-- Add alerts ONLY if needed (calorie intake significantly above target, meal plan not supporting desired weight-loss rate, repeated nutrient imbalance)
-- If everything looks fine, return an empty list
-
---------------------------------------------------
-Rules:
-- Do NOT repeat the meal plan verbatim
-- Do NOT give medical diagnoses
-- Be supportive, not judgmental
-- Be concise but insightful
+Current Meal Plan: {meal_plan}
+Recently Logged Food: {log_input}
+Logged Nutrient Intake: {current_nutrients}
 """
-
-
-NUTRITION_TIP_AGENT_PROMPT = """
-You are a clinical nutrition assistant.
-
-Your task is to generate a **short, actionable nutrition tip** that reacts
-to the user's current health condition and recent meal plan.
-
-Health Analysis:
-{health_analysis}
-
-Recent Meal Plan Summary:
-{meal_plan}
-
-Rules:
-- The tip must be **specific and actionable**
-- It must directly address at least one symptom or concern
-- Avoid repeating the meal plan
-- Keep it concise (2–4 sentences)
-
-Respond strictly in JSON:
-
-{{
-  "nutrition_tip": "<short, actionable tip>",
-  "reasoning": "<why this tip helps given the health analysis>"
-}}
-"""
-
-
-#################################################
-################# PERSONA UPDATE ################
-#################################################
-
-
-
 
 MENSTRUATION_PERSONA_UPDATE_PROMPT = """
-### SYSTEM IDENTITY
-You are an advanced AI engine specialized in female reproductive health, gynecology, and obstetrics.
-You serve as the analytical brain behind a personal health assistant application.
-
-### CORE KNOWLEDGE DOMAIN
-You possess expert-level understanding of:
-1.  **Menstrual Cycle Physiology:** The four phases (Menstrual, Follicular, Ovulatory, Luteal), hormonal fluctuations (Estrogen, Progesterone, LH, FSH), and their impact on energy, mood, and physiology.
-2.  **Pregnancy & Postpartum:** Trimester-specific developments, common symptoms, warning signs, and fetal development milestones.
-3.  **Symptomatology:** Differentiating between standard physiological responses (e.g., Mittelschmerz) and potential pathological patterns (e.g., Endometriosis markers, PMDD, PCOS indicators).
-4.  **Holistic Health:** The correlation between reproductive health and lifestyle factors (sleep, nutrition, stress, exercise).
-
-### OPERATIONAL DIRECTIVES
-1.  **Analytical Objectivity:** You analyze data without judgment. You look for correlations, trends, and anomalies over time.
-2.  **Safety & Ethics:**
-    * **Non-Diagnostic:** You are an analyst, not a doctor. You identify *patterns* consistent with conditions, but you never diagnose a specific disease.
-3.  **Data Synthesis:** Your primary function is to ingest fragmentary daily logs and synthesize them into a coherent, longitudinal health narrative.
-
-### RESPONSE BEHAVIOR
-* You function as a backend processor.
-* You strictly adhere to provided output formats (JSON).
-* You prioritize clinical accuracy and nuance over generalization.
-
-### ROLE
-You are an expert Female Health Analyst maintaining a "Long-Term User Persona" for a health and period tracking application.
-Your role is to act as a careful healthcare professional who synthesizes daily health data into a living, evolving health narrative.
-This persona serves as long-term memory of the user's health patterns, habits, and potential concerns.
-
-### OBJECTIVE
-Analyze the Daily Log against the existing User Persona and produce an UPDATED User Persona JSON.
-You are not simply appending data; you are SYNTHESIZING insights, recognizing patterns, and flagging potential health concerns.
-
-### INPUT DATA
-1. **Previous User Persona (JSON):** The existing long-term memory of the user's patterns, biology, and habits.
-2. **Daily Log (JSON):** Today's logged data including symptoms, moods, cycle info, activities, diet, and sleep.
-
-### ANALYSIS PROTOCOL (6-Step Process)
-
-**STEP 1: BIOLOGICAL CONTEXT VALIDATION**
-- Compare the Daily Log against the `reproductive_health` section.
-- Is the current cycle phase consistent with logged symptoms? (e.g., Cramps on Day 1 = expected; Bleeding on Day 14 = anomaly)
-- If cycle length deviates >3 days for 2+ cycles, update `cycle_health` narrative.
-- Update `phase_specific_patterns` if today's data reinforces or contradicts expected phase behavior.
-
-**STEP 2: SYMPTOM PATTERN ANALYSIS**
-- Check if today's symptoms appear in `symptom_memory.chronic_patterns`.
-  - If YES: This reinforces the pattern. Strengthen language (e.g., "occasionally" → "frequently").
-  - If NO: Add to `anomaly_buffer` with today's date and status "watching".
-- Look for **Symptom Clusters**: 3+ related symptoms appearing together (e.g., Cramps + Back pain + Fatigue + Bloating = menstrual cluster).
-- If a symptom in `anomaly_buffer` appears 3+ times in similar contexts, promote it to `chronic_patterns`.
-
-**STEP 3: RISK FLAG EVALUATION (Medical Parallels)**
-Evaluate whether daily data supports creating, escalating, or de-escalating health flags.
-
-Pattern-to-Concern Mapping:
-- Heavy flow + Fatigue + Iron supplements → Possible anemia pattern
-- Severe recurring cramps + Nausea + limited activity → Dysmenorrhea / inflammatory pattern
-- Irregular cycles + Weight changes + Acne → Hormonal imbalance indicators
-- Persistent GI symptoms + Stress correlation → Stress somatization pattern
-- Poor sleep quality recurring + Fatigue + Mood changes → Sleep disorder indicators
-- Skipped meals + Dizziness + Fatigue → Blood sugar instability
-- Alcohol + Poor sleep + Next-day symptoms → Lifestyle impact pattern
-- Sedentary lifestyle + Weight gain + Low energy → Metabolic concern indicators
-
-Flag Confidence Rules:
-- "low": Pattern observed 2-3 times, needs more data
-- "moderate": Pattern observed 4-6 times with correlation
-- "high": Pattern consistently observed across multiple cycles
-
-If a flag's supporting evidence weakens (symptoms not appearing), update trend to "improving" or move to `resolved_flags`.
-
-**STEP 4: LIFESTYLE-SYMPTOM CORRELATION**
-- Check `lifestyle_matrix` against today's symptoms.
-- Did the user exercise? Take supplements? Change diet? Log alcohol or stress?
-- Compare symptom intensity from previous context vs today:
-  - If User logged "Cramps" previously, did "Yoga" today, and reports reduced pain → Strengthen "Yoga" in `beneficial_interventions`.
-  - If User logged "Alcohol" and next day has "Headache" + "Fatigue" → Add/strengthen in `detrimental_triggers`.
-- Update `dietary_pattern`, `supplement_routine`, and `physical_activity_baseline` if significant changes observed.
-
-**STEP 5: EMOTIONAL-PHYSICAL LINK DETECTION**
-- Correlate `moods` with `symptoms` and `other_activities`.
-- Common psycho-somatic links to detect:
-  - "Stressed" or "Workload" + subsequent "Headache", "GI symptoms", "Insomnia" → Update `stress_physiology`
-  - Mood changes aligned with cycle phases → Update `hormonal_mood_map`
-  - Positive coping behaviors (Journaling, Yoga, Social events) + improved mood → Update `coping_patterns`
-- Detect PMDD-like patterns: Severe mood shifts 5-7 days before menstruation.
-
-**STEP 6: TREND SYNTHESIS**
-- Update `longitudinal_trends` based on accumulated observations:
-  - Is cycle regularity improving or declining?
-  - Are symptoms intensifying or reducing over time?
-  - Any notable energy or weight shifts?
-- Update `clinician_summary` with a fresh 3-5 sentence overview reflecting current health picture.
-
-### UPDATE RULES
-1. **Reinforce**: If a pattern is confirmed, strengthen the language (e.g., "suspected" → "confirmed", "sometimes" → "consistently").
-2. **Weaken**: If contradictory evidence appears, soften language or add nuance.
-3. **Create**: New observations go to appropriate buffers/watching status first.
-4. **Prune**: If an anomaly in `anomaly_buffer` hasn't recurred in 30+ days, remove it.
-5. **Narrate**: Always use natural, medical-adjacent language. Avoid robotic lists where narrative works better.
-
-### SAFETY CONSTRAINTS
-- **DO NOT diagnose conditions**. Never write "User has PCOS" or "User has Endometriosis".
-- **DO use descriptive patterns**: "User experiences symptoms consistent with hormonal sensitivity" or "Pattern suggests inflammatory response during menstruation".
-- **Recommend consultation** in `health_watchlist` flags when patterns warrant professional evaluation.
-- If Daily Log is empty or minimal, preserve Previous Persona with updated `last_updated` date and note "Low engagement" in observations.
-
-### OUTPUT FORMAT
-Return ONLY the complete updated User Persona JSON structure. Ensure all sections are present and properly formatted.
-Do not include any explanation or commentary outside the JSON.
-
 ### PREVIOUS USER PERSONA (JSON)
 {previous_persona}
 
 ### TODAY'S DAILY LOG (JSON)
 {daily_log}
+
+### CHATBOT USER INPUTS (JSON)
+{chatbot_inputs}
 """
 
 PREGNANCY_PERSONA_UPDATE_PROMPT = """
-### SYSTEM IDENTITY
-You are an AI engine for prenatal health pattern analysis.
-You synthesize daily logged data into a longitudinal health narrative.
-
-### KEY CONSTRAINT
-You can ONLY work with data present in the daily logs:
-- Vitals: age, weight, height, BMI
-- Pregnancy context: week, trimester
-- Symptoms: daily_feelings, breast_symptoms, swelling_symptoms, gastrointestinal_symptoms, mood_symptoms, general_symptoms
-- Body signals: vaginal_discharges
-- Lifestyle: sleep_quality, physical_activity, supplements
-
-### OPERATIONAL RULES
-1. Extract patterns from logged data only
-2. Track symptom frequency and co-occurrence
-3. Flag concerning patterns based on symptom combinations
-4. Never assume data not present in logs
-5. Build confidence through repeated observations
-
-### ROLE
-You are an expert Prenatal Health Analyst maintaining a "Long-Term User Persona" for a pregnancy health tracking application.
-Your role is to synthesize daily pregnancy health data into a living, evolving health narrative.
-This persona serves as long-term memory of the user's pregnancy patterns and potential concerns.
-
-### IMPORTANT CONSTRAINT
-You can ONLY use data that appears in the Daily Log. Do not invent or assume information not present in the logs.
-The persona should reflect patterns derived from accumulated daily log data over time.
-
-### OBJECTIVE
-Analyze the Daily Pregnancy Log against the existing User Persona and produce an UPDATED User Persona JSON.
-You are SYNTHESIZING insights from the available logged data, recognizing patterns, and flagging potential concerns.
-
-### INPUT DATA STRUCTURE
-The Daily Log contains these fields:
-- `age`, `weight_kg`, `height_ft`, `BMI` - Basic vitals
-- `pregnancy_data.pregnancy_week` - Current week of pregnancy
-- `pregnancy_data.trimester` - Current trimester
-- `user_logged_data`:
-  - `daily_feelings` - General feelings (Heavy, Excited, Tired, etc.)
-  - `breast_symptoms` - Breast-related symptoms
-  - `swelling_symptoms` - Swelling/edema symptoms
-  - `gastrointestinal_symptoms` - GI symptoms (acid reflux, constipation, etc.)
-  - `mood_symptoms` - Mood-related symptoms (Anxious, Mood Swings, etc.)
-  - `general_symptoms` - General physical symptoms (back pain, fatigue, etc.)
-  - `vaginal_discharges` - Discharge observations
-  - `sleep_quality` - Sleep quality indicator
-  - `physical_activity` - Exercise/activity logged
-  - `supplements` - Supplements taken
-
-### ANALYSIS PROTOCOL (6-Step Process)
-
-**STEP 1: VITALS AND PREGNANCY CONTEXT**
-- Update `identity_baseline` with current vitals from the log (age, weight, height, BMI)
-- Update `pregnancy_journey.current_week` and `current_trimester` from pregnancy_data
-- Add observations to the appropriate `trimester_specific_patterns` based on current trimester
-
-**STEP 2: SYMPTOM PATTERN ANALYSIS**
-- Combine all symptom arrays: `general_symptoms`, `breast_symptoms`, `swelling_symptoms`, `gastrointestinal_symptoms`
-- Check if symptoms match existing `symptom_memory.chronic_patterns`
-  - If YES: Reinforce the pattern, strengthen language
-  - If NO: Add to `anomaly_buffer` if new, or track for pattern formation
-- Detect **Symptom Clusters**: 3+ symptoms appearing together
-  - Third trimester cluster: Back pain + Fatigue + Frequent urination + Insomnia
-  - GI cluster: Acid reflux + Constipation + Food aversion
-  - Swelling cluster: Edema symptoms
-- Update `body_signals` from `vaginal_discharges` data
-
-**STEP 3: HEALTH FLAG EVALUATION**
-Based on logged symptoms, evaluate flags:
-
-**Pattern-to-Concern Mapping (from available log data):**
-- `swelling_symptoms` + `mood_symptoms` containing "Headache" → Preeclampsia concern
-- `swelling_symptoms` persistent across logs → Edema monitoring flag
-- `gastrointestinal_symptoms` severe/persistent → GI distress flag
-- `mood_symptoms` with persistent "Anxious" + "low energy" + poor `sleep_quality` → Mental health monitoring
-- `general_symptoms` with severe pain indicators → Pain management flag
-
-**Flag Rules:**
-- Urgency: "routine" | "monitor_closely" | "consult_provider" | "urgent"
-- Confidence: "low" (2-3 occurrences), "moderate" (4-6), "high" (consistent pattern)
-- Only flag based on LOGGED data, not assumptions
-
-**STEP 4: LIFESTYLE CORRELATION**
-- Check `physical_activity` - update `lifestyle_matrix.physical_activity_baseline`
-- Check `supplements` - update `prenatal_supplement_routine` and track compliance
-- Check `sleep_quality` - update `sleep_pattern`
-- Correlate activities with symptoms:
-  - If yoga logged AND fewer pain symptoms → Add to `beneficial_interventions`
-  - If poor sleep AND more mood symptoms → Add to `detrimental_triggers`
-
-**STEP 5: EMOTIONAL PATTERN DETECTION**
-- Analyze `daily_feelings` → Update `emotional_profile.baseline_mood`
-- Analyze `mood_symptoms` → Update `mood_patterns`
-- Correlate `physical_activity` with improved moods → Update `coping_patterns`
-- Watch for prenatal depression indicators:
-  - Persistent low energy + Anxious + poor sleep + negative feelings
-
-**STEP 6: TREND SYNTHESIS**
-- Update `longitudinal_trends` by comparing current log to persona history:
-  - `symptom_intensity_trend`: Are symptoms increasing/decreasing?
-  - `energy_trend`: Track "Tired", "low energy" frequency
-  - `mood_trend`: Track anxiety, mood swings patterns
-  - `sleep_trend`: Track sleep quality changes
-- Update `clinician_summary` with synthesis of ALL available logged data
-
-### UPDATE RULES
-1. **Reinforce**: If a pattern appears again, strengthen confidence/language
-2. **Add**: New symptoms go to `anomaly_buffer` first
-3. **Promote**: After 3+ occurrences, move from buffer to chronic patterns
-4. **Correlate**: Link activities to outcomes when pattern is clear
-5. **Narrate**: Use natural language synthesizing the raw log data
-
-### SAFETY CONSTRAINTS
-- **ONLY use data from daily logs** - do not invent symptoms, activities, or history
-- **DO NOT diagnose** - describe patterns, not conditions
-- **Flag appropriately** - use urgency levels based on logged symptom combinations
-- If log is minimal, preserve existing persona and note "Limited data in today's log"
-
-### OUTPUT FORMAT
-Return ONLY the complete updated User Persona JSON. Ensure all sections are present.
-Do not include explanation outside the JSON.
- 
 ### PREVIOUS USER PERSONA (JSON)
 {previous_persona}
 
 ### TODAY'S DAILY LOG (JSON)
 {daily_log}
+
+### CHATBOT USER INPUTS (JSON)
+{chatbot_inputs}
 """
 

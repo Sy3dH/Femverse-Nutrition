@@ -8,6 +8,12 @@ class ImageExtraInput(BaseModel):
 class ImageFoodLogInput(BaseModel):
     image_content: bytes
     extra: Optional[ImageExtraInput]
+class NutritionFoodItem(BaseModel):
+    package_name: str
+    calories: float
+    carbs: float
+    protein: float
+    fats: float
 
 class FoodItem(BaseModel):
     name: str
@@ -32,7 +38,7 @@ class ImageFoodLogOutput(BaseModel):
 
 class TextFoodLogInput(BaseModel):
     food_name: str
-    lang:str
+    lang: str
     timezone: str
 
 class InsightsInputs(BaseModel):
@@ -52,7 +58,7 @@ class TextFoodLogOutput(BaseModel):
 
 class NutritionFoodLogOutput(BaseModel):
     status: int
-    foods: List[FoodItem]
+    foods: List[NutritionFoodItem]
     error: Optional[str] = None
     verbose_reasoning: str
 

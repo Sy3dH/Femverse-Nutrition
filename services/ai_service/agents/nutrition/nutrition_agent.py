@@ -7,16 +7,17 @@ from services.ai_service.modules.nutrition.models import NutritionInputs, ThreeD
 logger = logging.getLogger("celery")
 
 class NutritionAgent(BaseAgent):
-    async def run(self, inputs: NutritionInputs) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+    async def run(self, inputs: NutritionInputs, cached_content_name: Optional[str] = None) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
         try:
-            nutrition_prompt = PromptBuilder.build_prompt(
+            nutrition_user_prompt = PromptBuilder.build_prompt(
                 agent_name=AgentName.NUTRITION.value,
                 data=inputs
             )
 
             response, error = self.query_llm(
-                prompt=nutrition_prompt,
-                output_schema=ThreeDayPlan
+                prompt=nutrition_user_prompt,
+                output_schema=ThreeDayPlan,
+                cached_content_name=cached_content_name
             )
 
             if error:

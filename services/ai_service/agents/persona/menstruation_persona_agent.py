@@ -17,19 +17,17 @@ class MenstruationPersonaAgent(BaseAgent):
     Synthesizes daily health data into a long-term health narrative.
     """
 
-    async def run(
-        self,
-        inputs: MenstruationPersonaUpdateInput,
-    ) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+    async def run(self, inputs: MenstruationPersonaUpdateInput, cached_content_name: Optional[str] = None) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
         try:
-            prompt = PromptBuilder.build_prompt(
+            user_prompt = PromptBuilder.build_prompt(
                 agent_name=AgentName.MENSTRUATION_PERSONA_UPDATE.value,
                 data=inputs,
             )
 
             response, error = self.query_llm(
-                prompt=prompt,
+                prompt=user_prompt,
                 output_schema=MenstruationPersonaUpdateOutput,
+                cached_content_name=cached_content_name,
             )
 
             if error:
