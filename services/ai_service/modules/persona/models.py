@@ -12,6 +12,24 @@ from services.ai_service.modules.nutrition.models import (
 
 
 # ============== DAILY LOG INPUTS ==============
+class LifestyleAndConsumption(BaseModel):
+    """
+    Tracks daily food, hydration, sleep, and habits.
+    """
+    breakfast: Optional[str] = None
+    lunch: Optional[str] = None
+    dinner: Optional[str] = None
+    water_intake_liters: Optional[float] = None
+    alcohol_units: Optional[int] = None
+    caffeine_servings: Optional[int] = None
+    smoking_status: Optional[str] = None
+    sleephours: Optional[float] = None
+
+class ChatbotInputs(BaseModel):
+    """
+    Chatbot memories for any additional information provided by the user.
+    """
+    chatbot_memories: List[str] = None
 
 class MenstruationDailyLogInput(BaseModel):
     """
@@ -26,6 +44,7 @@ class MenstruationDailyLogInput(BaseModel):
     cycle_data: Optional[MenstrualCycleData] = None
     try_to_conceive: Optional[TryToConceiveData] = None
     user_logged_data: Optional[MenstrualUserLoggedData] = None
+    lifestyle_and_consumption: Optional[LifestyleAndConsumption] = None
 
 
 class PregnancyDailyLogInput(BaseModel):
@@ -40,6 +59,7 @@ class PregnancyDailyLogInput(BaseModel):
     BMI: Optional[float] = None
     pregnancy_data: Optional[PregnancyMetaData] = None
     user_logged_data: Optional[PregnancyUserLoggedData] = None
+    lifestyle_and_consumption: Optional[LifestyleAndConsumption] = None
 
 
 # ============== PERSONA SUB-STRUCTURES ==============
@@ -173,7 +193,6 @@ class MenstruationPersona(BaseModel):
     Complete menstruation user persona structure.
     Matches POC/Menstruation/Input_Persona.json schema.
     """
-    user_id: Optional[str] = None
     last_updated: Optional[str] = None
     persona_version: Optional[str] = None
     identity_baseline: Optional[IdentityBaseline] = None
@@ -191,7 +210,6 @@ class PregnancyPersona(BaseModel):
     Complete pregnancy user persona structure.
     Matches POC/Pregnancy/Input_Persona.json schema.
     """
-    user_id: Optional[str] = None
     last_updated: Optional[str] = None
     persona_version: Optional[str] = None
     identity_baseline: Optional[IdentityBaseline] = None
@@ -212,7 +230,8 @@ class MenstruationPersonaUpdateInput(BaseModel):
     Contains both the previous persona and today's daily log.
     """
     previous_persona: MenstruationPersona
-    daily_log: MenstruationDailyLogInput
+    daily_log: List[MenstruationDailyLogInput]
+    chatbot_inputs: Optional[ChatbotInputs] = None
 
 
 class MenstruationPersonaUpdateOutput(BaseModel):
@@ -229,7 +248,8 @@ class PregnancyPersonaUpdateInput(BaseModel):
     Contains both the previous persona and today's daily log.
     """
     previous_persona: PregnancyPersona
-    daily_log: PregnancyDailyLogInput
+    daily_log: List[PregnancyDailyLogInput]
+    chatbot_inputs: Optional[ChatbotInputs] = None
 
 class PregnancyPersonaUpdateOutput(BaseModel):
     """

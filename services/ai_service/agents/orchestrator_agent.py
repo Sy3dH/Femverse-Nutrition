@@ -14,6 +14,7 @@ from services.ai_service.modules.logging.models import (TextFoodLogInput, ImageF
                                                        )
 from services.ai_service.resolvers.nutrition_resolver import NutritionInputResolver
 from services.ai_service.utils.system_prompts import AGENT_SYSTEM_PROMPTS
+from services.ai_service.modules.persona.models import MenstruationPersonaUpdateInput, PregnancyPersonaUpdateInput
 
 logger = logging.getLogger("celery")
 
@@ -82,7 +83,7 @@ class AgentsOrchestrator:
             agent: str,
             user_id: Optional[str] = None,
             date: Optional[int] = None,
-            direct_inputs: Optional[Union[NutritionInputs, InsightsInputs,TextFoodLogInput, ImageFoodLogInput]] = None,
+            direct_inputs: Optional[Union[NutritionInputs, InsightsInputs,TextFoodLogInput, ImageFoodLogInput, MenstruationPersonaUpdateInput, PregnancyPersonaUpdateInput]] = None,
     ) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
 
         if module not in self.registry:

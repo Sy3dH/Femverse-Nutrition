@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Optional, Dict, Any, Tuple, Union
+from typing import Optional, Dict, Any, Tuple
 
 from services.ai_service.base_agent import BaseAgent
 from services.ai_service.modules.persona.models import PregnancyPersonaUpdateInput
@@ -17,44 +17,29 @@ class PregnancyPersonaAgent(BaseAgent):
     Synthesizes daily pregnancy health data into a long-term health narrative.
     """
 
-    async def run(
-        self,
-        inputs: Union[PregnancyPersonaUpdateInput, Dict[str, Any]]
-    ) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+    async def run(self, inputs: PregnancyPersonaUpdateInput, cached_content_name: Optional[str] = None) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
         """
         Update the pregnancy persona with today's daily log.
 
         Args:
-            inputs: Either PregnancyPersonaUpdateInput or dict containing
+            inputs: PregnancyPersonaUpdateInput containing
                    'previous_persona' and 'daily_log'
 
         Returns:
             Tuple of (updated_persona_dict, error_message)
         """
         try:
-            # Normalize inputs to plain dicts
-            if isinstance(inputs, dict):
-                previous_persona = inputs.get("previous_persona", {})
-                daily_log = inputs.get("daily_log", {})
-            else:
-                previous_persona = inputs.previous_persona.model_dump()
-                daily_log = inputs.daily_log.model_dump()
-
-            # Build context for PromptBuilder (pre-serialized JSON strings)
-            context_data = {
-                "previous_persona": json.dumps(previous_persona, indent=2, ensure_ascii=False),
-                "daily_log": json.dumps(daily_log, indent=2, ensure_ascii=False),
-            }
 
             # Use PromptBuilder to construct the final prompt
-            prompt = PromptBuilder.build_prompt(
+            user_prompt = PromptBuilder.build_prompt(
                 agent_name=AgentName.PREGNANCY_PERSONA_UPDATE.value,
-                data=context_data,
+                data=inputs,
             )
 
             # Call LLM using default temperature and no explicit system prompt
             response, error = self.query_llm(
-                prompt=prompt,
+                prompt=user_prompt,
+                cached_content_name=cached_content_name,
                 output_schema=PregnancyPersonaUpdateOutput,
             )
 

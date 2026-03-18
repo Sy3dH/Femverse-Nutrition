@@ -34,7 +34,7 @@ async def update_menstruation_persona(
         Updated persona JSON with synthesized health patterns
     """
     try:
-        direct_inputs = body.model_dump()
+        direct_inputs = body
         
         result, error = await orchestrator.run_agents_for_module(
             module=AgentModuleEnum.PERSONA.value,
@@ -75,7 +75,7 @@ async def update_pregnancy_persona(
         Updated persona JSON with synthesized pregnancy health patterns
     """
     try:
-        direct_inputs = body.model_dump()
+        direct_inputs = body
         
         result, error = await orchestrator.run_agents_for_module(
             module=AgentModuleEnum.PERSONA.value,
