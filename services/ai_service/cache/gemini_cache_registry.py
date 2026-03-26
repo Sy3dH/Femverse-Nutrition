@@ -71,31 +71,35 @@ class GeminiCacheRegistry:
             return None
 
     def get_or_create(
-        self,
-        display_name: str,
-        system_instruction: str,
-        ttl: str = DEFAULT_CACHE_TTL,
+            self,
+            display_name: str,
+            system_instruction: str,
+            ttl: str = DEFAULT_CACHE_TTL,
     ) -> Optional[str]:
 
         if display_name in self._registry:
-            logger.debug(f"[CacheRegistry] Cache hit for '{display_name}'")
-            return self._registry[display_name]
+            cache_name = self._registry[display_name]
+
+            # Verify it's still alive on Google's side
+            try:
+                cache = self._client.caches.get(name=cache_name)
+                expire_time = getattr(cache, "expire_time", None)
+                now = datetime.now(timezone.utc)
+
+                if expire_time and expire_time <= now:
+                    raise ValueError("Cache expired")
+
+                logger.debug(f"[CacheRegistry] Cache hit for '{display_name}'")
+                return cache_name
+
+            except Exception as e:
+                logger.warning(
+                    f"[CacheRegistry] Cache '{cache_name}' is invalid/expired ({e}) — recreating."
+                )
+                del self._registry[display_name]  # evict stale entry
 
         logger.info(f"[CacheRegistry] Cache miss for '{display_name}' — creating.")
         return self._create_cache(display_name, system_instruction, ttl)
-
-    def invalidate(self, display_name: str) -> None:
-
-        cache_name = self._registry.pop(display_name, None)
-        if not cache_name:
-            logger.warning(f"[CacheRegistry] invalidate() called for unknown key: '{display_name}'")
-            return
-
-        try:
-            self._client.caches.delete(name=cache_name)
-            logger.info(f"[CacheRegistry] Deleted cache: display_name={display_name}, name={cache_name}")
-        except Exception as e:
-            logger.error(f"[CacheRegistry] Failed to delete cache '{cache_name}': {e}")
 
     def refresh_ttl(self, display_name: str, ttl: str = DEFAULT_CACHE_TTL) -> None:
 
