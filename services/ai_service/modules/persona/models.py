@@ -257,3 +257,208 @@ class PregnancyPersonaUpdateOutput(BaseModel):
     Contains both the previous persona and today's daily log.
     """
     current_persona: PregnancyPersona
+
+
+# ============== NUTRITION PERSONA ==============
+
+class DigestiveSymptoms(BaseModel):
+    """Daily digestive / GI symptom log."""
+    bloating: Optional[bool] = None
+    constipation: Optional[bool] = None
+    acid_reflux: Optional[bool] = None
+    nausea: Optional[bool] = None
+    other_symptoms: Optional[List[str]] = None
+
+
+class NutritionDailyLogInput(BaseModel):
+    """
+    Daily log input for nutrition tracking.
+    No menstruation or pregnancy data — standalone nutrition + lifestyle signals.
+    """
+    age: Optional[int] = None
+    weight_kg: Optional[float] = None
+    height_ft: Optional[str] = None
+    BMI: Optional[float] = None
+    breakfast: Optional[str] = None
+    lunch: Optional[str] = None
+    dinner: Optional[str] = None
+    snacks: Optional[str] = None
+    water_intake_liters: Optional[float] = None
+    energy_level: Optional[str] = None
+    hunger_satiety_pattern: Optional[str] = None
+    digestive_symptoms: Optional[DigestiveSymptoms] = None
+    mood: Optional[str] = None
+    sleep_hours: Optional[float] = None
+    physical_activity: Optional[str] = None
+    supplements: Optional[List[str]] = None
+    alcohol_units: Optional[int] = None
+    caffeine_servings: Optional[int] = None
+    smoking_status: Optional[str] = None
+
+
+class NutritionalProfile(BaseModel):
+    """Observed dietary and nutritional patterns over time."""
+    dietary_pattern_summary: Optional[str] = None
+    macro_balance_observation: Optional[str] = None
+    micronutrient_gaps_suspected: Optional[str] = None
+    hydration_pattern: Optional[str] = None
+    meal_timing_behavior: Optional[str] = None
+    food_sensitivities_observed: Optional[str] = None
+    dietary_restrictions: Optional[str] = None
+
+
+class DigestiveHealth(BaseModel):
+    """Long-term digestive and gut health patterns."""
+    gi_pattern_summary: Optional[str] = None
+    food_symptom_correlations: Optional[str] = None
+    bloating_trigger_pattern: Optional[str] = None
+    gut_health_signals: Optional[str] = None
+
+
+class NutritionLongitudinalTrends(BaseModel):
+    """Long-term nutrition and health trends over time."""
+    dietary_consistency_trend: Optional[str] = None
+    digestive_health_trend: Optional[str] = None
+    energy_trend: Optional[str] = None
+    weight_trend: Optional[str] = None
+    mood_trend: Optional[str] = None
+    notable_shifts: Optional[str] = None
+
+
+class NutritionPersona(BaseModel):
+    """
+    Complete nutrition user persona structure.
+    Tracks dietary patterns, digestive health, and nutrition-related
+    lifestyle signals independently of menstruation or pregnancy data.
+    """
+    last_updated: Optional[str] = None
+    persona_version: Optional[str] = None
+    identity_baseline: Optional[IdentityBaseline] = None
+    nutritional_profile: Optional[NutritionalProfile] = None
+    digestive_health: Optional[DigestiveHealth] = None
+    symptom_memory: Optional[SymptomMemory] = None
+    emotional_profile: Optional[EmotionalProfile] = None
+    lifestyle_matrix: Optional[LifestyleMatrix] = None
+    health_watchlist: Optional[HealthWatchlist] = None
+    longitudinal_trends: Optional[NutritionLongitudinalTrends] = None
+    clinician_summary: Optional[str] = None
+
+
+class NutritionPersonaUpdateInput(BaseModel):
+    """
+    API input for nutrition persona update endpoint.
+    Contains the previous persona, today's daily log(s), and optional chatbot inputs.
+    """
+    previous_persona: NutritionPersona
+    daily_log: List[NutritionDailyLogInput]
+    chatbot_inputs: Optional[ChatbotInputs] = None
+
+
+class NutritionPersonaUpdateOutput(BaseModel):
+    """
+    API output for nutrition persona update endpoint.
+    """
+    current_persona: NutritionPersona
+
+
+# ============== FITNESS PERSONA ==============
+
+class WorkoutLog(BaseModel):
+    """Single workout session details."""
+    activity_type: Optional[str] = None
+    duration_minutes: Optional[int] = None
+    intensity: Optional[str] = None
+    perceived_exertion: Optional[str] = None
+    workout_notes: Optional[str] = None
+
+
+class FitnessDailyLogInput(BaseModel):
+    """
+    Daily log input for fitness tracking.
+    Captures workout, recovery, sleep, and lifestyle signals.
+    No menstruation or pregnancy data.
+    """
+    age: Optional[int] = None
+    weight_kg: Optional[float] = None
+    height_ft: Optional[str] = None
+    BMI: Optional[float] = None
+    workout_log: Optional[WorkoutLog] = None
+    rest_day: Optional[bool] = None
+    muscle_soreness: Optional[str] = None
+    energy_level: Optional[str] = None
+    sleep_hours: Optional[float] = None
+    sleep_quality: Optional[str] = None
+    water_intake_liters: Optional[float] = None
+    nutrition_snapshot: Optional[str] = None
+    mood: Optional[str] = None
+    stress_level: Optional[str] = None
+    injury_notes: Optional[str] = None
+    supplements: Optional[List[str]] = None
+    steps_count: Optional[int] = None
+
+
+class FitnessProfile(BaseModel):
+    """Long-term fitness capability and training pattern summary."""
+    current_fitness_level: Optional[str] = None
+    primary_fitness_goal: Optional[str] = None
+    preferred_activities: Optional[str] = None
+    training_frequency_pattern: Optional[str] = None
+    workout_consistency: Optional[str] = None
+    strength_endurance_observations: Optional[str] = None
+
+
+class RecoveryProfile(BaseModel):
+    """Long-term recovery and rest pattern summary."""
+    sleep_pattern_summary: Optional[str] = None
+    typical_recovery_time: Optional[str] = None
+    overtraining_signals: Optional[str] = None
+    injury_history: Optional[str] = None
+    fatigue_patterns: Optional[str] = None
+
+
+class FitnessLongitudinalTrends(BaseModel):
+    """Long-term fitness and body composition trends over time."""
+    fitness_progression_trend: Optional[str] = None
+    workout_consistency_trend: Optional[str] = None
+    recovery_trend: Optional[str] = None
+    energy_trend: Optional[str] = None
+    weight_trend: Optional[str] = None
+    mood_trend: Optional[str] = None
+    notable_shifts: Optional[str] = None
+
+
+class FitnessPersona(BaseModel):
+    """
+    Complete fitness user persona structure.
+    Tracks training patterns, recovery, body composition, and
+    performance-related lifestyle signals independently of
+    menstruation or pregnancy data.
+    """
+    last_updated: Optional[str] = None
+    persona_version: Optional[str] = None
+    identity_baseline: Optional[IdentityBaseline] = None
+    fitness_profile: Optional[FitnessProfile] = None
+    recovery_profile: Optional[RecoveryProfile] = None
+    symptom_memory: Optional[SymptomMemory] = None
+    emotional_profile: Optional[EmotionalProfile] = None
+    lifestyle_matrix: Optional[LifestyleMatrix] = None
+    health_watchlist: Optional[HealthWatchlist] = None
+    longitudinal_trends: Optional[FitnessLongitudinalTrends] = None
+    clinician_summary: Optional[str] = None
+
+
+class FitnessPersonaUpdateInput(BaseModel):
+    """
+    API input for fitness persona update endpoint.
+    Contains the previous persona, today's daily log(s), and optional chatbot inputs.
+    """
+    previous_persona: FitnessPersona
+    daily_log: List[FitnessDailyLogInput]
+    chatbot_inputs: Optional[ChatbotInputs] = None
+
+
+class FitnessPersonaUpdateOutput(BaseModel):
+    """
+    API output for fitness persona update endpoint.
+    """
+    current_persona: FitnessPersona

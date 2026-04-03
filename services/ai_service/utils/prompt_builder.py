@@ -55,6 +55,12 @@ def _get_prompt_template(agent_name: AgentName) -> Optional[str]:
     elif agent_name == AgentName.PREGNANCY_PERSONA_UPDATE.value:
         return prompt_templates.PREGNANCY_PERSONA_UPDATE_PROMPT
 
+    elif agent_name == AgentName.NUTRITION_PERSONA_UPDATE.value:
+        return prompt_templates.NUTRITION_PERSONA_UPDATE_PROMPT
+
+    elif agent_name == AgentName.FITNESS_PERSONA_UPDATE.value:
+        return prompt_templates.FITNESS_PERSONA_UPDATE_PROMPT
+
     # Default nutrition prompt
     return prompt_templates.NUTRITION_AGENT_PROMPT
 
