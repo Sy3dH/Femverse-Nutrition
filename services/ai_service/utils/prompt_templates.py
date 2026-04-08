@@ -1073,7 +1073,8 @@ NUTRITION_TEXT_LOGGING_PROMPT = """
 """
 
 NUTRITION_INSIGHTS_PROMPT = """
-User Health & Goal Context: {health_analysis}
+Onboarding Data: {onboarding_data}
+Persona: {persona}
 Target Weight: {target_weight}
 Current Weight: {current_weight}
 Expected Weight Loss Rate (per week): {weight_change_rate}
