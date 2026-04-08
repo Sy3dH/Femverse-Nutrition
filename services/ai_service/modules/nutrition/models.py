@@ -90,6 +90,8 @@ class NutritionInputs(BaseModel):
     alerts: List[str] = []
     menstruation_persona: Optional[Dict[str, Any]] = None
     pregnancy_persona: Optional[Dict[str, Any]] = None
+    language: Optional[str] = None
+    timezone: Optional[str] = None
 
 
 class NutritionInputsDummy(BaseModel):
