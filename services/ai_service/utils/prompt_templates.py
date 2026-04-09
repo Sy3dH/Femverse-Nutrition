@@ -1028,6 +1028,9 @@ Menstrual Data:{menstrual_data}
 Pregnancy Data: {pregnancy_data}
 Menstruation Persona:{menstruation_persona}
 Pregnancy Persona: {pregnancy_persona}
+Language: {language}
+Timezone: {timezone}
+Activity_level: {activity_level}
 """
 
 # TODO: This is just a placeholder, need to refine it later
