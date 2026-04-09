@@ -65,6 +65,8 @@ class InsightsInputs(BaseModel):
     current_weight: Optional[float] = None
     weight_change_rate: Optional[float] = None
     meal_plan: Optional[Dict[str, Any]] = None
+    language: Optional[str] = None
+    timezone: Optional[str] = None
 
 class TextFoodLogOutput(BaseModel):
     status: int
