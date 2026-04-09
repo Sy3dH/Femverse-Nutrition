@@ -1074,13 +1074,16 @@ NUTRITION_TEXT_LOGGING_PROMPT = """
 """
 
 NUTRITION_INSIGHTS_PROMPT = """
-User Health & Goal Context: {health_analysis}
+Onboarding Data: {onboarding_data}
+Persona: {persona}
 Target Weight: {target_weight}
 Current Weight: {current_weight}
 Expected Weight Loss Rate (per week): {weight_change_rate}
 Current Meal Plan: {meal_plan}
 Recently Logged Food: {log_input}
 Logged Nutrient Intake: {current_nutrients}
+language: {language}
+timezone: {timezone}
 """
 
 MENSTRUATION_PERSONA_UPDATE_PROMPT = """
