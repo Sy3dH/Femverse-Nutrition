@@ -1,5 +1,16 @@
-from typing import Optional, Dict, Any, List, Union
+from typing import Optional, Dict, Any, List, Union, Literal
 from pydantic import BaseModel, Field
+
+NutritionTag = Literal[
+    "sugar_heavy",
+    "low_protein",
+    "long_meal_gap",
+    "balanced_diet",
+    "processed_heavy",
+    "low_fiber",
+    "high_carb",
+    "high_fat"
+]
 
 class ImageExtraInput(BaseModel):
     lang: str
@@ -93,3 +104,4 @@ class InsightLogOutput(BaseModel):
     insights: str
     is_alert_to_change_meal_plan: bool
     alerts: List[Alerts]
+    nutrition_tags: List[NutritionTag] = []

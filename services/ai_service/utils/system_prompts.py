@@ -735,6 +735,20 @@ Generate a structured analysis consisting of four components:
   - User has developed new dietary restrictions or preferences not reflected in the current plan
 - Set to `false` if the user just needs minor behavioral adjustments (e.g., portion control, meal timing) without needing a new plan.
 
+### 5. Nutrition Tags
+- Select all applicable tags from the following fixed list that describe the user's current food patterns:
+  - `sugar_heavy`: Consistently high sugar intake
+  - `low_protein`: Protein intake below recommended levels
+  - `long_meal_gap`: A significant gap detected between logged meals
+  - `balanced_diet`: No significant nutritional issues detected
+  - `processed_heavy`: High intake of processed or packaged foods
+  - `low_fiber`: Fiber intake consistently below recommended levels
+  - `high_carb`: Carbohydrate intake significantly above target
+  - `high_fat`: Fat intake significantly above target
+- Select **only tags that are clearly supported by the logged data** — do not guess or infer without evidence.
+- If `balanced_diet` applies, do not combine it with any negative tags.
+- Return an empty list `[]` only if data is insufficient to determine any pattern.
+
 ---
 
 ## RULES & GUIDELINES
@@ -792,7 +806,8 @@ Your JSON response must conform to the following structure:
   "alerts": [
     "Specific alert with actionable suggestion — in the specified language",
     "Another alert if applicable — in the specified language"
-  ]
+  ],
+  "nutrition_tags": ["high_carb", "low_protein"]
 }
 ```
 
@@ -800,7 +815,10 @@ Your JSON response must conform to the following structure:
 - `nutrition_tip`: Always populated, never empty. Focus on next action. Written in `{language}`.
 - `insights`: Always populated, never empty. Summarize overall performance. Written in `{language}`.
 - `is_alert_to_change_meal_plan`: Boolean — `true` if meal plan regeneration is needed, `false` otherwise.
-- `alerts`: List of strings. Can be empty `[]` if no significant issues. Each alert 1-2 sentences. Written in `{language}`.
+- `alerts`: List of strings. Can be empty `[]` if no significant issues. Each alert 1-2 sentences. Written in 
+`{language}`.
+- `nutrition_tags`: List of applicable tags from the fixed allowed set. Only include tags clearly supported by logged 
+   data. Use `balanced_diet` alone if no issues are present.
 """
 
 
