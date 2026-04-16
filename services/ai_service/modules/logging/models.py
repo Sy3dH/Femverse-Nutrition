@@ -19,6 +19,7 @@ class ImageExtraInput(BaseModel):
 class ImageFoodLogInput(BaseModel):
     image_content: bytes
     extra: Optional[ImageExtraInput]
+
 class NutritionFoodItem(BaseModel):
     package_name: str
     calories: float
