@@ -1,5 +1,16 @@
-from typing import Optional, Dict, Any, List
-from pydantic import BaseModel
+from typing import Optional, Dict, Any, List, Union, Literal
+from pydantic import BaseModel, Field
+
+NutritionTag = Literal[
+    "sugar_heavy",
+    "low_protein",
+    "long_meal_gap",
+    "balanced_diet",
+    "processed_heavy",
+    "low_fiber",
+    "high_carb",
+    "high_fat"
+]
 
 class ImageExtraInput(BaseModel):
     lang: str
@@ -8,6 +19,7 @@ class ImageExtraInput(BaseModel):
 class ImageFoodLogInput(BaseModel):
     image_content: bytes
     extra: Optional[ImageExtraInput]
+
 class NutritionFoodItem(BaseModel):
     package_name: str
     calories: float
@@ -41,14 +53,32 @@ class TextFoodLogInput(BaseModel):
     lang: str
     timezone: str
 
+class OnboardingResponseItem(BaseModel):
+    question_code: str
+    answer: Union[str, int, List[str]]
+
+class OnboardingNutritionInput(BaseModel):
+    responses: List[OnboardingResponseItem] = Field(
+        ..., description="List of onboarding question responses"
+    )
+    more_about_user: Optional[str] = Field(
+        None, description="Free text about the user"
+    )
+    get_pregnant: Optional[bool] = Field(
+        False, description="Whether the user has a goal to get pregnant"
+    )
+
 class InsightsInputs(BaseModel):
-    log_input: TextFoodLogInput
+    persona: Optional[Dict[str, Any]] = None # TODO: @hanzalah5 needs to verify this
+    onboarding_data: Optional[OnboardingNutritionInput] = None
+    log_input: Optional[TextFoodLogInput] = None
     current_nutrients: Optional[Dict[str, Any]] = None
     target_weight: Optional[float] = None
     current_weight: Optional[float] = None
     weight_change_rate: Optional[float] = None
-    health_analysis: Optional[str] = None
     meal_plan: Optional[Dict[str, Any]] = None
+    language: Optional[str] = None
+    timezone: Optional[str] = None
 
 class TextFoodLogOutput(BaseModel):
     status: int
@@ -75,3 +105,4 @@ class InsightLogOutput(BaseModel):
     insights: str
     is_alert_to_change_meal_plan: bool
     alerts: List[Alerts]
+    nutrition_tags: List[NutritionTag] = []
