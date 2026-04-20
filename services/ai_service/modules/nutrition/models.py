@@ -1,5 +1,16 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Dict, Any, Union, List
+from typing import Optional, Dict, Any,Literal, Union, List
+
+MealLabel = Literal[
+    "Brunch",
+    "Breakfast",
+    "Morning Snack",
+    "Lunch",
+    "Snack",
+    "Evening Snack",
+    "Dinner"
+]
+
 
 class OnboardingResponseItem(BaseModel):
     question_code: str
@@ -79,15 +90,18 @@ class NutritionInputs(BaseModel):
     pregnancy_data: Optional[PregnancyDataInput] = None
     bmi: Optional[float] = None
     bmr: Optional[float] = None
-    country: Optional[str] = None # Not sure
+    country: Optional[str] = None
     food_prefs: Optional[str] = None
+    medical_condition: Optional[List[str]] = None
+    cuisine: Optional[str] = None
     allergies: Optional[str] = None
     target_calories: Optional[int] = None
-    health_goals: Optional[str] = None #Already coming from the onboarding
-    current_weight: Optional[str] = None  #Already coming from the onboarding
-    weight_change_rate: Optional[str] = None #Already coming from the onboarding
-    target_weight: Optional[float] = None #Already coming from the onboarding
+    health_goals: Optional[str] = None
+    current_weight: Optional[str] = None
+    weight_change_rate: Optional[str] = None
+    target_weight: Optional[float] = None
     activity_level: Optional[str] = None
+    meals_per_day: Optional[int] = Field(default=3, ge=2, le=5)
     alerts: List[str] = []
     menstruation_persona: Optional[Dict[str, Any]] = None
     pregnancy_persona: Optional[Dict[str, Any]] = None
@@ -118,18 +132,23 @@ class Nutrition(BaseModel):
     fats_g: float
 
 class Meal(BaseModel):
+    meal_label: MealLabel
     name: str
     recipe: Recipe
+    target_calories: int
     nutrition: Nutrition
 
 class Meals(BaseModel):
-    breakfast: Meal
-    lunch: Meal
-    dinner: Meal
+    meal_1: Meal
+    meal_2: Meal
+    meal_3: Optional[Meal] = None
+    meal_4: Optional[Meal] = None
+    meal_5: Optional[Meal] = None
 
 class DailyPlan(BaseModel):
     day: int
     focus: str
+    daily_calorie_target: int
     meals: Meals
 
 class ThreeDayPlan(BaseModel):

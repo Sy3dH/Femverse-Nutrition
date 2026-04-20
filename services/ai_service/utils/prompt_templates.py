@@ -1022,6 +1022,9 @@ Current Weight: {current_weight}
 Weight change rate: {weight_change_rate}
 Target Weight: {target_weight}
 Alerts: {alerts}
+Medical Condition: {medical_condition}
+Cuisine: {cuisine}
+Meals in a day: {meals_per_day}
 Onboarding Data: {onboarding_data}
 Target Calories: {target_calories}
 Menstrual Data:{menstrual_data}
