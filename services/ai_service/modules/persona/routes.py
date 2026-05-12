@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException
 from typing import Optional
 import logging
@@ -15,6 +16,24 @@ logger = logging.getLogger(__name__)
 
 persona_router = APIRouter()
 orchestrator = AgentsOrchestrator()
+
+
+def _default_log_dates(daily_log) -> None:
+    """
+    Ensure every daily-log entry carries an ISO-8601 ``log_date``. Any entry
+    that omits it (or sends ``None``) is defaulted to today (UTC) so the
+    persona-update prompt always receives a temporal anchor for date math.
+    """
+    today_iso = datetime.now(timezone.utc).date().isoformat()
+    if not daily_log:
+        return
+    for entry in daily_log:
+        if getattr(entry, "log_date", None):
+            continue
+        try:
+            entry.log_date = today_iso
+        except Exception:
+            pass
 
 
 @persona_router.post("/menstruation/update")
@@ -36,6 +55,7 @@ async def update_menstruation_persona(
         Updated persona JSON with synthesized health patterns
     """
     try:
+        _default_log_dates(body.daily_log)
         direct_inputs = body
         
         result, error = await orchestrator.run_agents_for_module(
@@ -77,6 +97,7 @@ async def update_pregnancy_persona(
         Updated persona JSON with synthesized pregnancy health patterns
     """
     try:
+        _default_log_dates(body.daily_log)
         direct_inputs = body
         
         result, error = await orchestrator.run_agents_for_module(

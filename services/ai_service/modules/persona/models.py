@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List, Dict, Any, Union
+from typing import Optional, List, Dict, Any, Union, Literal
 
 # Import existing models to reuse for daily logs
 from services.ai_service.modules.nutrition.models import (
@@ -9,6 +9,13 @@ from services.ai_service.modules.nutrition.models import (
     PregnancyMetaData,
     PregnancyUserLoggedData,
 )
+
+
+# Source attribution for any persona observation that originates from the user.
+# - self_reported: stated by the user via chatbot but not yet corroborated
+# - clinician_confirmed: user explicitly stated a clinician confirmed it
+# - inferred: derived from accumulated daily-log patterns by the LLM
+Source = Literal["self_reported", "clinician_confirmed", "inferred"]
 
 
 # ============== DAILY LOG INPUTS ==============
@@ -28,8 +35,10 @@ class LifestyleAndConsumption(BaseModel):
 class ChatbotInputs(BaseModel):
     """
     Chatbot memories for any additional information provided by the user.
+    Defaults to an empty list so downstream prompt rendering never sees a
+    literal ``None`` for this field.
     """
-    chatbot_memories: List[str] = None
+    chatbot_memories: List[str] = Field(default_factory=list)
 
 class MenstruationDailyLogInput(BaseModel):
     """
@@ -37,6 +46,14 @@ class MenstruationDailyLogInput(BaseModel):
     Matches POC/Menstruation/Input_Daily_Logs.json structure.
     Reuses existing models from nutrition module.
     """
+    log_date: Optional[str] = Field(
+        default=None,
+        description=(
+            "ISO-8601 YYYY-MM-DD date this log entry refers to. "
+            "API layer defaults this to today (UTC) when missing so the LLM "
+            "always has a temporal anchor for date arithmetic."
+        ),
+    )
     age: Optional[int] = None
     weight_kg: Optional[float] = None
     height_ft: Optional[str] = None
@@ -53,6 +70,14 @@ class PregnancyDailyLogInput(BaseModel):
     Matches POC/Pregnancy/Input_Daily_Logs.json structure.
     Reuses existing models from nutrition module.
     """
+    log_date: Optional[str] = Field(
+        default=None,
+        description=(
+            "ISO-8601 YYYY-MM-DD date this log entry refers to. "
+            "API layer defaults this to today (UTC) when missing so the LLM "
+            "always has a temporal anchor for date arithmetic."
+        ),
+    )
     age: Optional[int] = None
     weight_kg: Optional[float] = None
     height_ft: Optional[str] = None
@@ -109,6 +134,7 @@ class AnomalyBufferItem(BaseModel):
     context: Optional[str] = None
     status: Optional[str] = None
     pregnancy_week: Optional[int] = None  # For pregnancy-specific tracking
+    source: Optional[Source] = None
 
 
 class SymptomMemory(BaseModel):
@@ -166,6 +192,7 @@ class HealthFlag(BaseModel):
     first_flagged: Optional[str] = None
     last_updated: Optional[str] = None
     pregnancy_week_flagged: Optional[int] = None  # For pregnancy
+    source: Optional[Source] = None
 
 
 class HealthWatchlist(BaseModel):
