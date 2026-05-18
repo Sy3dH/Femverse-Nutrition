@@ -32,13 +32,31 @@ class LifestyleAndConsumption(BaseModel):
     smoking_status: Optional[str] = None
     sleephours: Optional[float] = None
 
+class ChatbotMemory(BaseModel):
+    """
+    Single chatbot-derived memory fact with an optional capture timestamp.
+    `recorded_at` is the wall-clock date the memory was captured by the
+    upstream chatbot; the persona LLM uses it as the temporal anchor for any
+    relative phrasing inside `memory` ("last week", "two cycles ago", etc.).
+    """
+    memory: str
+    recorded_at: Optional[str] = Field(
+        default=None,
+        description=(
+            "ISO-8601 YYYY-MM-DD date this memory was captured by the chatbot. "
+            "Used to anchor relative time references inside `memory`. "
+            "When missing, the persona LLM falls back to `today`."
+        ),
+    )
+
+
 class ChatbotInputs(BaseModel):
     """
     Chatbot memories for any additional information provided by the user.
     Defaults to an empty list so downstream prompt rendering never sees a
     literal ``None`` for this field.
     """
-    chatbot_memories: List[str] = Field(default_factory=list)
+    chatbot_memories: List[ChatbotMemory] = Field(default_factory=list)
 
 class MenstruationDailyLogInput(BaseModel):
     """
@@ -129,9 +147,30 @@ class PregnancyJourney(BaseModel):
 class AnomalyBufferItem(BaseModel):
     """Individual anomaly being watched in symptom memory."""
     symptom: str
-    first_seen: Optional[str] = None
+    first_seen: Optional[str] = Field(
+        default=None,
+        description=(
+            "ISO-8601 YYYY-MM-DD of the earliest observation of this symptom. "
+            "IMMUTABLE once set."
+        ),
+    )
+    last_seen: Optional[str] = Field(
+        default=None,
+        description=(
+            "ISO-8601 YYYY-MM-DD of the most recent observation of this symptom. "
+            "Bumped to the most recent `log_date` (or `session_date` from chat) "
+            "that contains the symptom. Used for prune decisions."
+        ),
+    )
     occurrences: Optional[int] = None
-    context: Optional[str] = None
+    context: Optional[List[str]] = Field(
+        default=None,
+        description=(
+            "Append-only list of contextual notes / session-date anchors tied to "
+            "individual observations of this symptom. New observations append; "
+            "prior entries are never rewritten."
+        ),
+    )
     status: Optional[str] = None
     pregnancy_week: Optional[int] = None  # For pregnancy-specific tracking
     source: Optional[Source] = None
@@ -202,6 +241,32 @@ class HealthWatchlist(BaseModel):
     protective_factors: Optional[List[str]] = None
 
 
+class NotableShift(BaseModel):
+    """
+    Single append-only entry recording a meaningful longitudinal shift.
+    Each shift is anchored to a calendar date so the persona retains a
+    chronologically ordered narrative of progression.
+    """
+    date: str = Field(
+        description=(
+            "ISO-8601 YYYY-MM-DD date the shift was observed or attributed to. "
+            "Typically `today` for shifts derived from a daily log, or the "
+            "`session_date` for shifts derived from chat synthesis."
+        ),
+    )
+    summary: str = Field(
+        description="One-sentence description of the observed shift.",
+    )
+    evidence_window: Optional[str] = Field(
+        default=None,
+        description=(
+            "Optional human-readable window of supporting evidence "
+            "(e.g., 'last 4 weeks', '2026-04-01 to 2026-05-01'). "
+            "Free-form; not parsed."
+        ),
+    )
+
+
 class LongitudinalTrends(BaseModel):
     """Long-term health trends over time."""
     cycle_regularity_trend: Optional[str] = None  # For menstruation
@@ -210,7 +275,13 @@ class LongitudinalTrends(BaseModel):
     weight_trend: Optional[str] = None
     mood_trend: Optional[str] = None  # For pregnancy
     sleep_trend: Optional[str] = None  # For pregnancy
-    notable_shifts: Optional[str] = None
+    notable_shifts: Optional[List[NotableShift]] = Field(
+        default=None,
+        description=(
+            "Append-only chronological list of notable longitudinal shifts. "
+            "Never rewrite or remove a prior entry; new observations append."
+        ),
+    )
 
 
 # ============== COMPLETE PERSONA STRUCTURES ==============
@@ -219,9 +290,11 @@ class MenstruationPersona(BaseModel):
     """
     Complete menstruation user persona structure.
     Matches POC/Menstruation/Input_Persona.json schema.
+
+    `persona_version` intentionally absent from the LLM-visible schema; it is
+    stamped by the data-access / persistence layer outside of the LLM call.
     """
     last_updated: Optional[str] = None
-    persona_version: Optional[str] = None
     identity_baseline: Optional[IdentityBaseline] = None
     reproductive_health: Optional[ReproductiveHealth] = None
     symptom_memory: Optional[SymptomMemory] = None
@@ -236,9 +309,11 @@ class PregnancyPersona(BaseModel):
     """
     Complete pregnancy user persona structure.
     Matches POC/Pregnancy/Input_Persona.json schema.
+
+    `persona_version` intentionally absent from the LLM-visible schema; it is
+    stamped by the data-access / persistence layer outside of the LLM call.
     """
     last_updated: Optional[str] = None
-    persona_version: Optional[str] = None
     identity_baseline: Optional[IdentityBaseline] = None
     pregnancy_journey: Optional[PregnancyJourney] = None
     symptom_memory: Optional[SymptomMemory] = None
@@ -302,6 +377,14 @@ class NutritionDailyLogInput(BaseModel):
     Daily log input for nutrition tracking.
     No menstruation or pregnancy data — standalone nutrition + lifestyle signals.
     """
+    log_date: Optional[str] = Field(
+        default=None,
+        description=(
+            "ISO-8601 YYYY-MM-DD date this log entry refers to. "
+            "API layer defaults this to today (UTC) when missing so the LLM "
+            "always has a temporal anchor for date arithmetic."
+        ),
+    )
     age: Optional[int] = None
     weight_kg: Optional[float] = None
     height_ft: Optional[str] = None
@@ -349,7 +432,13 @@ class NutritionLongitudinalTrends(BaseModel):
     energy_trend: Optional[str] = None
     weight_trend: Optional[str] = None
     mood_trend: Optional[str] = None
-    notable_shifts: Optional[str] = None
+    notable_shifts: Optional[List[NotableShift]] = Field(
+        default=None,
+        description=(
+            "Append-only chronological list of notable longitudinal shifts. "
+            "Never rewrite or remove a prior entry; new observations append."
+        ),
+    )
 
 
 class NutritionPersona(BaseModel):
@@ -357,9 +446,11 @@ class NutritionPersona(BaseModel):
     Complete nutrition user persona structure.
     Tracks dietary patterns, digestive health, and nutrition-related
     lifestyle signals independently of menstruation or pregnancy data.
+
+    `persona_version` intentionally absent from the LLM-visible schema; it is
+    stamped by the data-access / persistence layer outside of the LLM call.
     """
     last_updated: Optional[str] = None
-    persona_version: Optional[str] = None
     identity_baseline: Optional[IdentityBaseline] = None
     nutritional_profile: Optional[NutritionalProfile] = None
     digestive_health: Optional[DigestiveHealth] = None
@@ -405,6 +496,14 @@ class FitnessDailyLogInput(BaseModel):
     Captures workout, recovery, sleep, and lifestyle signals.
     No menstruation or pregnancy data.
     """
+    log_date: Optional[str] = Field(
+        default=None,
+        description=(
+            "ISO-8601 YYYY-MM-DD date this log entry refers to. "
+            "API layer defaults this to today (UTC) when missing so the LLM "
+            "always has a temporal anchor for date arithmetic."
+        ),
+    )
     age: Optional[int] = None
     weight_kg: Optional[float] = None
     height_ft: Optional[str] = None
@@ -451,7 +550,13 @@ class FitnessLongitudinalTrends(BaseModel):
     energy_trend: Optional[str] = None
     weight_trend: Optional[str] = None
     mood_trend: Optional[str] = None
-    notable_shifts: Optional[str] = None
+    notable_shifts: Optional[List[NotableShift]] = Field(
+        default=None,
+        description=(
+            "Append-only chronological list of notable longitudinal shifts. "
+            "Never rewrite or remove a prior entry; new observations append."
+        ),
+    )
 
 
 class FitnessPersona(BaseModel):
@@ -460,9 +565,11 @@ class FitnessPersona(BaseModel):
     Tracks training patterns, recovery, body composition, and
     performance-related lifestyle signals independently of
     menstruation or pregnancy data.
+
+    `persona_version` intentionally absent from the LLM-visible schema; it is
+    stamped by the data-access / persistence layer outside of the LLM call.
     """
     last_updated: Optional[str] = None
-    persona_version: Optional[str] = None
     identity_baseline: Optional[IdentityBaseline] = None
     fitness_profile: Optional[FitnessProfile] = None
     recovery_profile: Optional[RecoveryProfile] = None

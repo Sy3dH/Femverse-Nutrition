@@ -124,17 +124,31 @@ def _get_prompt_template(agent_name: AgentName) -> Optional[str]:
     elif agent_name == AgentName.NUTRITION_LABEL_IMAGE_LOGGING.value:
         return prompt_templates.NUTRITION_LABEL_IMAGE_PROMPT
 
-    # Persona agents
-    elif agent_name == AgentName.MENSTRUATION_PERSONA_UPDATE.value:
+    # Persona agents — both SINGLE and BATCH variants share the same user
+    # prompt template (the SINGLE-vs-BATCH semantics live in the cached
+    # system prompt, not in the per-request user payload).
+    elif agent_name in (
+        AgentName.MENSTRUATION_PERSONA_UPDATE_SINGLE.value,
+        AgentName.MENSTRUATION_PERSONA_UPDATE_BATCH.value,
+    ):
         return prompt_templates.MENSTRUATION_PERSONA_UPDATE_PROMPT
 
-    elif agent_name == AgentName.PREGNANCY_PERSONA_UPDATE.value:
+    elif agent_name in (
+        AgentName.PREGNANCY_PERSONA_UPDATE_SINGLE.value,
+        AgentName.PREGNANCY_PERSONA_UPDATE_BATCH.value,
+    ):
         return prompt_templates.PREGNANCY_PERSONA_UPDATE_PROMPT
 
-    elif agent_name == AgentName.NUTRITION_PERSONA_UPDATE.value:
+    elif agent_name in (
+        AgentName.NUTRITION_PERSONA_UPDATE_SINGLE.value,
+        AgentName.NUTRITION_PERSONA_UPDATE_BATCH.value,
+    ):
         return prompt_templates.NUTRITION_PERSONA_UPDATE_PROMPT
 
-    elif agent_name == AgentName.FITNESS_PERSONA_UPDATE.value:
+    elif agent_name in (
+        AgentName.FITNESS_PERSONA_UPDATE_SINGLE.value,
+        AgentName.FITNESS_PERSONA_UPDATE_BATCH.value,
+    ):
         return prompt_templates.FITNESS_PERSONA_UPDATE_PROMPT
 
     # Default nutrition prompt
@@ -148,6 +162,7 @@ class PromptBuilder:
         agent_name: AgentName,
         data: Any,
         today: Optional[str] = None,
+        extra_context: Optional[Dict[str, Any]] = None,
     ) -> str:
         """
         Render the final user prompt for an agent.
@@ -158,6 +173,14 @@ class PromptBuilder:
         back to UTC today. Templates that include a ``{today}`` placeholder
         will receive this value; templates that do not are unaffected (unused
         format keys are ignored by ``str.format``).
+
+        The optional ``extra_context`` mapping is layered on top of the raw
+        Pydantic dump so callers can inject template-only fields (e.g.
+        ``prev_last_updated`` for persona templates) without polluting the
+        input schema. Values are rendered via the same JSON-aware formatter
+        used for top-level fields. ``extra_context`` keys win over both the
+        raw dump and the auto-resolved ``today`` value, in keeping with the
+        principle that the caller has the most authoritative context.
         """
         template = _get_prompt_template(agent_name=agent_name)
 
@@ -169,6 +192,10 @@ class PromptBuilder:
 
         context = {k: _format_value_for_template(v) for k, v in raw.items()}
         context["today"] = resolved_today
+
+        if extra_context:
+            for k, v in extra_context.items():
+                context[k] = _format_value_for_template(v)
 
         try:
             return template.format(**context)

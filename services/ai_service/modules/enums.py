@@ -7,10 +7,17 @@ class AgentName(Enum):
     NUTRITION_IMAGE_LOGGING = "nutrition-image-logging"
     NUTRITION_LABEL_IMAGE_LOGGING = "nutrition-label-image-logging"
     NUTRITION_INSIGHTS = "nutrition-insights"
-    MENSTRUATION_PERSONA_UPDATE = "menstruation-persona-update"
-    PREGNANCY_PERSONA_UPDATE = "pregnancy-persona-update"
-    NUTRITION_PERSONA_UPDATE = "nutrition-persona-update"
-    FITNESS_PERSONA_UPDATE = "fitness-persona-update"
+    # Persona-update agents. Each module has TWO variants — single-log and
+    # batch-log — so the route layer can dispatch the right system prompt
+    # without the LLM ever seeing the unused mode's rules.
+    MENSTRUATION_PERSONA_UPDATE_SINGLE = "menstruation-persona-update-single"
+    MENSTRUATION_PERSONA_UPDATE_BATCH = "menstruation-persona-update-batch"
+    PREGNANCY_PERSONA_UPDATE_SINGLE = "pregnancy-persona-update-single"
+    PREGNANCY_PERSONA_UPDATE_BATCH = "pregnancy-persona-update-batch"
+    NUTRITION_PERSONA_UPDATE_SINGLE = "nutrition-persona-update-single"
+    NUTRITION_PERSONA_UPDATE_BATCH = "nutrition-persona-update-batch"
+    FITNESS_PERSONA_UPDATE_SINGLE = "fitness-persona-update-single"
+    FITNESS_PERSONA_UPDATE_BATCH = "fitness-persona-update-batch"
 
 
 class PlanType(Enum):

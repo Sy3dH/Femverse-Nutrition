@@ -51,25 +51,34 @@ class AgentsOrchestrator:
                     "resolver": None,
                 }
             },
-            AgentModuleEnum.PERSONA.value: {
-                AgentName.MENSTRUATION_PERSONA_UPDATE.value: {
-                    "agent": MenstruationPersonaAgent(llm_service=self.llm_service),
-                    "resolver": None,  # Direct inputs only
-                },
-                AgentName.PREGNANCY_PERSONA_UPDATE.value: {
-                    "agent": PregnancyPersonaAgent(llm_service=self.llm_service),
-                    "resolver": None,  # Direct inputs only
-                },
-                AgentName.NUTRITION_PERSONA_UPDATE.value: {
-                    "agent": NutritionPersonaAgent(llm_service=self.llm_service),
-                    "resolver": None,  # Direct inputs only
-                },
-                AgentName.FITNESS_PERSONA_UPDATE.value: {
-                    "agent": FitnessPersonaAgent(llm_service=self.llm_service),
-                    "resolver": None,  # Direct inputs only
-                },
-            }
+            AgentModuleEnum.PERSONA.value: {},
         }
+
+        # Each persona module has TWO agent-name variants (single-log and
+        # batch-log) that share a single agent instance. The orchestrator
+        # registers BOTH variants against the SAME shared instance so the
+        # route layer can dispatch either mode without us having to keep
+        # two duplicate object graphs in memory.
+        menstruation_agent = MenstruationPersonaAgent(llm_service=self.llm_service)
+        pregnancy_agent = PregnancyPersonaAgent(llm_service=self.llm_service)
+        nutrition_persona_agent = NutritionPersonaAgent(llm_service=self.llm_service)
+        fitness_agent = FitnessPersonaAgent(llm_service=self.llm_service)
+
+        persona_registry = self.registry[AgentModuleEnum.PERSONA.value]
+        for agent_name_enum, agent_instance in (
+            (AgentName.MENSTRUATION_PERSONA_UPDATE_SINGLE, menstruation_agent),
+            (AgentName.MENSTRUATION_PERSONA_UPDATE_BATCH, menstruation_agent),
+            (AgentName.PREGNANCY_PERSONA_UPDATE_SINGLE, pregnancy_agent),
+            (AgentName.PREGNANCY_PERSONA_UPDATE_BATCH, pregnancy_agent),
+            (AgentName.NUTRITION_PERSONA_UPDATE_SINGLE, nutrition_persona_agent),
+            (AgentName.NUTRITION_PERSONA_UPDATE_BATCH, nutrition_persona_agent),
+            (AgentName.FITNESS_PERSONA_UPDATE_SINGLE, fitness_agent),
+            (AgentName.FITNESS_PERSONA_UPDATE_BATCH, fitness_agent),
+        ):
+            persona_registry[agent_name_enum.value] = {
+                "agent": agent_instance,
+                "resolver": None,  # Direct inputs only
+            }
 
     def _resolve_cache_name(self, agent_name: str) -> Optional[str]:
 
@@ -118,7 +127,18 @@ class AgentsOrchestrator:
 
         if direct_inputs:
             logger.info(f"Running {agent} with direct inputs")
-            result, error = await agent_instance.run(direct_inputs, cached_content_name)
+            # Persona agents accept an `agent_name` kwarg so the SINGLE-vs-BATCH
+            # variant is propagated to the prompt builder. Non-persona agents
+            # ignore the kwarg via **kwargs; we send it unconditionally only to
+            # persona agents (which we detect by module).
+            if module == AgentModuleEnum.PERSONA.value:
+                result, error = await agent_instance.run(
+                    direct_inputs,
+                    cached_content_name=cached_content_name,
+                    agent_name=agent,
+                )
+            else:
+                result, error = await agent_instance.run(direct_inputs, cached_content_name)
         else:
             if not user_id:
                 return None, "user_id required when direct_inputs not provided"
