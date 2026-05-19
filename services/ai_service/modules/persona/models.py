@@ -145,7 +145,13 @@ class PregnancyJourney(BaseModel):
 
 
 class AnomalyBufferItem(BaseModel):
-    """Individual anomaly being watched in symptom memory."""
+    """
+    Individual anomaly being watched in symptom memory.
+
+    This is the generic shape used by menstruation, nutrition, and fitness
+    personas. Pregnancy uses :class:`PregnancyAnomalyBufferItem` instead,
+    which adds the gestational-week anchor.
+    """
     symptom: str
     first_seen: Optional[str] = Field(
         default=None,
@@ -172,16 +178,45 @@ class AnomalyBufferItem(BaseModel):
         ),
     )
     status: Optional[str] = None
-    pregnancy_week: Optional[int] = None  # For pregnancy-specific tracking
     source: Optional[Source] = None
 
 
+class PregnancyAnomalyBufferItem(AnomalyBufferItem):
+    """
+    Pregnancy-specific anomaly buffer item.
+
+    Extends :class:`AnomalyBufferItem` with ``pregnancy_week`` so the persona
+    timeline can anchor each observation to the gestational week it occurred
+    in — a critical axis for trimester-aware reasoning.
+    """
+    pregnancy_week: Optional[int] = Field(
+        default=None,
+        description=(
+            "Gestational week at the time of this observation. Stamped on every "
+            "new buffer item and on every occurrence-increment when the current "
+            "week is known. Used by the pregnancy persona prompts for "
+            "trimester-aware reasoning."
+        ),
+    )
+
+
 class SymptomMemory(BaseModel):
-    """Long-term memory of symptom patterns and anomalies."""
+    """
+    Long-term memory of symptom patterns and anomalies.
+
+    Generic shape used by menstruation, nutrition, and fitness. Pregnancy uses
+    :class:`PregnancySymptomMemory`, which retypes ``anomaly_buffer`` to carry
+    gestational-week anchors.
+    """
     chronic_patterns: Optional[str] = None
     symptom_clusters: Optional[str] = None
     body_signals: Optional[str] = None
     anomaly_buffer: Optional[List[AnomalyBufferItem]] = None
+
+
+class PregnancySymptomMemory(SymptomMemory):
+    """Pregnancy variant: ``anomaly_buffer`` items are gestational-week aware."""
+    anomaly_buffer: Optional[List[PregnancyAnomalyBufferItem]] = None
 
 
 class EmotionalProfile(BaseModel):
@@ -219,26 +254,62 @@ class LifestyleMatrix(BaseModel):
 
 
 class HealthFlag(BaseModel):
-    """Health concern flag with supporting evidence and recommendations."""
+    """
+    Health concern flag with supporting evidence and recommendations.
+
+    Generic shape used by menstruation, nutrition, and fitness personas.
+    Pregnancy uses :class:`PregnancyHealthFlag` which adds the gestational
+    week the flag was raised in. ``urgency`` is generic and applies to every
+    module (RED-FLAG SYMPTOMS in the menstruation prompt populate it too).
+    """
     flag_id: str
     signal: Optional[str] = None
     medical_parallel: Optional[str] = None
     supporting_evidence: Optional[List[str]] = None
     confidence: Optional[str] = None
     trend: Optional[str] = None
-    urgency: Optional[str] = None  # For pregnancy
+    urgency: Optional[str] = None
     recommendation: Optional[str] = None
     first_flagged: Optional[str] = None
     last_updated: Optional[str] = None
-    pregnancy_week_flagged: Optional[int] = None  # For pregnancy
     source: Optional[Source] = None
 
 
+class PregnancyHealthFlag(HealthFlag):
+    """
+    Pregnancy-specific health flag.
+
+    Extends :class:`HealthFlag` with ``pregnancy_week_flagged`` so the flag
+    timeline can be reasoned about on the gestational axis.
+    """
+    pregnancy_week_flagged: Optional[int] = Field(
+        default=None,
+        description=(
+            "Gestational week at the time this flag was first raised or last "
+            "reinforced. Stamped on every new flag and on every update when the "
+            "current week is known. Used by the pregnancy persona prompts for "
+            "trimester-aware reasoning."
+        ),
+    )
+
+
 class HealthWatchlist(BaseModel):
-    """Active and resolved health flags with protective factors."""
+    """
+    Active and resolved health flags with protective factors.
+
+    Generic shape used by menstruation, nutrition, and fitness. Pregnancy
+    uses :class:`PregnancyHealthWatchlist`, which retypes the flag lists to
+    carry gestational-week anchors.
+    """
     active_flags: Optional[List[HealthFlag]] = None
     resolved_flags: Optional[List[HealthFlag]] = None
     protective_factors: Optional[List[str]] = None
+
+
+class PregnancyHealthWatchlist(HealthWatchlist):
+    """Pregnancy variant: flag lists are gestational-week aware."""
+    active_flags: Optional[List[PregnancyHealthFlag]] = None
+    resolved_flags: Optional[List[PregnancyHealthFlag]] = None
 
 
 class NotableShift(BaseModel):
@@ -310,16 +381,21 @@ class PregnancyPersona(BaseModel):
     Complete pregnancy user persona structure.
     Matches POC/Pregnancy/Input_Persona.json schema.
 
+    Pregnancy-specific anchoring: ``symptom_memory`` and ``health_watchlist``
+    use the gestational-week-aware :class:`PregnancySymptomMemory` /
+    :class:`PregnancyHealthWatchlist` subclasses so each anomaly and flag can
+    be timestamped on the trimester axis in addition to the calendar axis.
+
     `persona_version` intentionally absent from the LLM-visible schema; it is
     stamped by the data-access / persistence layer outside of the LLM call.
     """
     last_updated: Optional[str] = None
     identity_baseline: Optional[IdentityBaseline] = None
     pregnancy_journey: Optional[PregnancyJourney] = None
-    symptom_memory: Optional[SymptomMemory] = None
+    symptom_memory: Optional[PregnancySymptomMemory] = None
     emotional_profile: Optional[EmotionalProfile] = None
     lifestyle_matrix: Optional[LifestyleMatrix] = None
-    health_watchlist: Optional[HealthWatchlist] = None
+    health_watchlist: Optional[PregnancyHealthWatchlist] = None
     longitudinal_trends: Optional[LongitudinalTrends] = None
     clinician_summary: Optional[str] = None
 

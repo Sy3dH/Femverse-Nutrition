@@ -22,7 +22,7 @@ The persona pipeline on `feature/persona` had four agents (menstruation, pregnan
 - **`notable_shifts` had no chronology.** It was a free-form `Optional[str]` that got rewritten on every tick — the longitudinal timeline could not be reconstructed.
 
 The branch addresses all of these in three commits, plus introduces a brand-new chat-driven persona synthesis module.
-
+==
 ---
 
 ## 2. Commit timeline
@@ -400,17 +400,19 @@ class AnomalyBufferItem(BaseModel):
         ),
     )
     status: Optional[str] = None
-    pregnancy_week: Optional[int] = None
     source: Optional[Source] = None              # NEW — provenance
 ```
 
-**Three changes:**
+> `pregnancy_week` is **no longer on the generic `AnomalyBufferItem`**. It moved to the new `PregnancyAnomalyBufferItem` subclass — see §5.7 below.
 
-| Field      | Before                  | After                   | Why                                                                                                            |
-| ---------- | ----------------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `last_seen`| —                       | `Optional[str]`         | Distinguishes "first observed 6 months ago, last seen yesterday" from "first observed 6 months ago, gone now". |
-| `context`  | `Optional[str]`         | `Optional[List[str]]`   | Was destructively overwritten; now appends every observation. Enables retrospective trend reconstruction.       |
-| `source`   | —                       | `Optional[Source]`      | Distinguishes user-stated symptoms (e.g. "my doctor said I have IBS") from log-inferred ones.                  |
+**Four changes:**
+
+| Field           | Before                  | After                   | Why                                                                                                            |
+| --------------- | ----------------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `last_seen`     | —                       | `Optional[str]`         | Distinguishes "first observed 6 months ago, last seen yesterday" from "first observed 6 months ago, gone now". |
+| `context`       | `Optional[str]`         | `Optional[List[str]]`   | Was destructively overwritten; now appends every observation. Enables retrospective trend reconstruction.       |
+| `source`        | —                       | `Optional[Source]`      | Distinguishes user-stated symptoms (e.g. "my doctor said I have IBS") from log-inferred ones.                  |
+| `pregnancy_week`| `Optional[int]`         | **removed**             | Was leaking pregnancy-only state into menstruation / nutrition / fitness personas; moved to `PregnancyAnomalyBufferItem` (§5.7). |
 
 **Migration:** the `context` field type changes from `str` to `List[str]`. Anyone reading a persisted persona row with a string `context` will need a one-line backfill (`[old_string] if isinstance(old_string, str) else old_string`).
 
@@ -460,16 +462,101 @@ notable_shifts: Optional[List[NotableShift]] = Field(
 )
 ```
 
-### 5.6 CHANGED — `HealthFlag` gains `source`
+### 5.6 CHANGED — `HealthFlag`
+
+Two field-level changes:
+
+| Field                   | Before                  | After                | Why                                                                                                            |
+| ----------------------- | ----------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `source`                | —                       | `Optional[Source]`   | Same rationale as `AnomalyBufferItem.source`. A flag derived from a clinician statement carries higher trust than one inferred from log signals. |
+| `pregnancy_week_flagged`| `Optional[int]`         | **removed**          | Pregnancy-only state was leaking into the menstruation / nutrition / fitness personas; moved to `PregnancyHealthFlag` (§5.7). |
+| `urgency`               | `Optional[str]` (marked "For pregnancy") | `Optional[str]` (generic) | The stale `# For pregnancy` comment was removed — `urgency` is populated by every module's RED-FLAG SYMPTOMS block (e.g. heavy bleeding in menstruation). |
+
+### 5.7 NEW — pregnancy-specific subclasses for anomaly buffer / flag / watchlist
+
+Previously, `AnomalyBufferItem` and `HealthFlag` were single Pydantic classes shared by all four personas. Pregnancy-only fields (`pregnancy_week`, `pregnancy_week_flagged`) lived on them with a `# For pregnancy` comment, but nothing in the type system prevented those fields from being emitted into a menstruation / nutrition / fitness persona response.
+
+The branch now models the pregnancy axis as a proper subtype:
 
 ```python
-# Added:
-source: Optional[Source] = None
+# Generic — used by menstruation, nutrition, fitness
+class AnomalyBufferItem(BaseModel):
+    symptom: str
+    first_seen: ...
+    last_seen: ...
+    occurrences: ...
+    context: ...
+    status: ...
+    source: ...
+    # NO pregnancy_week
+
+class PregnancyAnomalyBufferItem(AnomalyBufferItem):
+    """Pregnancy-only buffer item; adds gestational-week anchor."""
+    pregnancy_week: Optional[int] = Field(default=None, description="...")
+
+
+# Generic — used by menstruation, nutrition, fitness
+class HealthFlag(BaseModel):
+    flag_id: str
+    signal: ...
+    medical_parallel: ...
+    supporting_evidence: ...
+    confidence: ...
+    trend: ...
+    urgency: ...
+    recommendation: ...
+    first_flagged: ...
+    last_updated: ...
+    source: ...
+    # NO pregnancy_week_flagged
+
+class PregnancyHealthFlag(HealthFlag):
+    """Pregnancy-only flag; adds gestational-week anchor."""
+    pregnancy_week_flagged: Optional[int] = Field(default=None, description="...")
+
+
+# Generic containers (menstruation, nutrition, fitness)
+class SymptomMemory(BaseModel):
+    chronic_patterns: ...
+    symptom_clusters: ...
+    body_signals: ...
+    anomaly_buffer: Optional[List[AnomalyBufferItem]] = None
+
+class HealthWatchlist(BaseModel):
+    active_flags: Optional[List[HealthFlag]] = None
+    resolved_flags: Optional[List[HealthFlag]] = None
+    protective_factors: ...
+
+# Pregnancy variants override the inner list types
+class PregnancySymptomMemory(SymptomMemory):
+    anomaly_buffer: Optional[List[PregnancyAnomalyBufferItem]] = None
+
+class PregnancyHealthWatchlist(HealthWatchlist):
+    active_flags: Optional[List[PregnancyHealthFlag]] = None
+    resolved_flags: Optional[List[PregnancyHealthFlag]] = None
 ```
 
-Same rationale as `AnomalyBufferItem.source`. A flag derived from a clinician statement carries higher trust than one inferred from log signals.
+`PregnancyPersona` is rewired to use the new subclassed containers (everything else on the class is unchanged):
 
-### 5.7 REMOVED — `persona_version` from every persona
+```python
+class PregnancyPersona(BaseModel):
+    ...
+    symptom_memory:   Optional[PregnancySymptomMemory]   = None   # was SymptomMemory
+    health_watchlist: Optional[PregnancyHealthWatchlist] = None   # was HealthWatchlist
+    ...
+```
+
+`MenstruationPersona`, `NutritionPersona`, and `FitnessPersona` continue to reference the generic `SymptomMemory` / `HealthWatchlist`, so their JSON schemas **no longer carry `pregnancy_week` or `pregnancy_week_flagged`** — the leak you noticed is gone.
+
+**Knock-on prompt fix:** the menstruation system-prompt HEAD's `MISSING DATA HANDLING` block previously listed `health_watchlist.active_flags[*].pregnancy_week_flagged` among the numeric-null examples. That mention was removed and a single positive constraint was added:
+
+> The menstruation `AnomalyBufferItem` and `HealthFlag` schemas DO NOT carry `pregnancy_week` or `pregnancy_week_flagged` — those fields exist only on the pregnancy-specific variants. Do NOT emit them in menstruation output.
+
+**Verification — what else needed to change:** nothing. The split is fully internal to `services/ai_service/modules/persona/models.py`. None of `routes.py`, `orchestrator_agent.py`, `prompt_builder.py`, the four `*_persona_agent.py` files, `synthesis_service.py`, or `persona_data_access.py` imports the inner classes directly — they all operate on the top-level `*PersonaUpdateInput / *PersonaUpdateOutput` envelopes, whose JSON schemas pick up the pregnancy-specific shapes automatically through `PregnancyPersona`. Existing pregnancy test fixtures in `services/Tests/data/persona_pregnancy_*.json` are unchanged: they already carry `pregnancy_week` / `pregnancy_week_flagged` and now validate against the pregnancy-specific types instead of the shared ones.
+
+**Migration:** if anything in the storage layer reads the inner-class types directly (e.g. `from services.ai_service.modules.persona.models import AnomalyBufferItem` for typing a pregnancy persona row), point it at the pregnancy variant instead (`PregnancyAnomalyBufferItem` / `PregnancyHealthFlag`). No grep hits exist for this in the repo today, so it's a no-op for any in-tree caller.
+
+### 5.8 REMOVED — `persona_version` from every persona
 
 **Before** (all four personas had it):
 
@@ -505,19 +592,27 @@ The system prompts explicitly instruct the model to **NOT** emit a `persona_vers
 
 **Migration:** the storage layer must stamp `persona_version` when reading the LLM's output before writing it back. (Marked as a user-owned TODO — see §7.)
 
-### 5.8 Schema diff summary table
+### 5.9 Schema diff summary table
 
-| Type                                                | Field                  | Before                          | After                              |
-| --------------------------------------------------- | ---------------------- | ------------------------------- | ---------------------------------- |
-| (new) `Source`                                      | —                      | —                               | `Literal[...]`                     |
-| (new) `ChatbotMemory`                               | —                      | —                               | new class                          |
-| (new) `NotableShift`                                | —                      | —                               | new class                          |
-| `ChatbotInputs.chatbot_memories`                    | type                   | `List[str]`                     | `List[ChatbotMemory]`              |
-| `*DailyLogInput.log_date`                           | —                      | —                               | `Optional[str]` (ISO date)         |
-| `AnomalyBufferItem.last_seen`                       | —                      | —                               | `Optional[str]`                    |
-| `AnomalyBufferItem.context`                         | type                   | `Optional[str]`                 | `Optional[List[str]]`              |
-| `AnomalyBufferItem.source`                          | —                      | —                               | `Optional[Source]`                 |
-| `HealthFlag.source`                                 | —                      | —                               | `Optional[Source]`                 |
+| Type                                                | Field                       | Before                          | After                              |
+| --------------------------------------------------- | --------------------------- | ------------------------------- | ---------------------------------- |
+| (new) `Source`                                      | —                           | —                               | `Literal[...]`                     |
+| (new) `ChatbotMemory`                               | —                           | —                               | new class                          |
+| (new) `NotableShift`                                | —                           | —                               | new class                          |
+| (new) `PregnancyAnomalyBufferItem`                  | —                           | —                               | subclass of `AnomalyBufferItem` with `pregnancy_week` |
+| (new) `PregnancyHealthFlag`                         | —                           | —                               | subclass of `HealthFlag` with `pregnancy_week_flagged` |
+| (new) `PregnancySymptomMemory`                      | —                           | —                               | subclass of `SymptomMemory` retyping `anomaly_buffer`  |
+| (new) `PregnancyHealthWatchlist`                    | —                           | —                               | subclass of `HealthWatchlist` retyping the flag lists  |
+| `ChatbotInputs.chatbot_memories`                    | type                        | `List[str]`                     | `List[ChatbotMemory]`              |
+| `*DailyLogInput.log_date`                           | —                           | —                               | `Optional[str]` (ISO date)         |
+| `AnomalyBufferItem.last_seen`                       | —                           | —                               | `Optional[str]`                    |
+| `AnomalyBufferItem.context`                         | type                        | `Optional[str]`                 | `Optional[List[str]]`              |
+| `AnomalyBufferItem.source`                          | —                           | —                               | `Optional[Source]`                 |
+| `AnomalyBufferItem.pregnancy_week`                  | —                           | `Optional[int]`                 | **removed** (moved to `PregnancyAnomalyBufferItem`) |
+| `HealthFlag.source`                                 | —                           | —                               | `Optional[Source]`                 |
+| `HealthFlag.pregnancy_week_flagged`                 | —                           | `Optional[int]`                 | **removed** (moved to `PregnancyHealthFlag`)        |
+| `PregnancyPersona.symptom_memory`                   | type                        | `SymptomMemory`                 | `PregnancySymptomMemory`           |
+| `PregnancyPersona.health_watchlist`                 | type                        | `HealthWatchlist`               | `PregnancyHealthWatchlist`         |
 | `LongitudinalTrends.notable_shifts`                 | type                   | `Optional[str]`                 | `Optional[List[NotableShift]]`     |
 | `NutritionLongitudinalTrends.notable_shifts`        | type                   | `Optional[str]`                 | `Optional[List[NotableShift]]`     |
 | `FitnessLongitudinalTrends.notable_shifts`          | type                   | `Optional[str]`                 | `Optional[List[NotableShift]]`     |
@@ -656,7 +751,10 @@ The following items are intentionally not implemented on this branch:
 | `log_date` field added to every `*DailyLogInput`             | NO        | Optional; defaults to today (UTC) at the route layer. Send the real date if you're backfilling.                       |
 | `AnomalyBufferItem.context` is now `List[str]`               | YES (read)| Stored personas with `context: "..."` need `[old_string]` backfill before re-feeding into the pipeline.               |
 | `AnomalyBufferItem.last_seen` / `source` added               | NO        | New optional fields; old persisted rows simply omit them.                                                             |
+| `AnomalyBufferItem.pregnancy_week` removed (moved to `PregnancyAnomalyBufferItem`) | YES (read) | A *pregnancy* persona row reads back identically. Non-pregnancy persona rows that previously persisted `pregnancy_week` will now reject that field — drop it on read or clear it. |
 | `HealthFlag.source` added                                    | NO        | Same as above.                                                                                                        |
+| `HealthFlag.pregnancy_week_flagged` removed (moved to `PregnancyHealthFlag`) | YES (read) | Same logic as above for pregnancy vs non-pregnancy persona rows.                                                      |
+| `PregnancyPersona.symptom_memory` / `.health_watchlist` are now `PregnancySymptomMemory` / `PregnancyHealthWatchlist` | NO (compatible) | JSON payload shape is the same as before for pregnancy personas — the rename is on the Python type, not on the wire. Internal callers that imported `SymptomMemory` / `HealthWatchlist` for pregnancy typing should switch to the `Pregnancy*` variants. |
 | `notable_shifts` is now `List[NotableShift]`                 | YES (read)| Stored personas with `notable_shifts: "..."` need to be migrated to a single-element list or cleared.                  |
 | `persona_version` removed from all four personas             | YES       | Storage layer must stamp it on write. The LLM no longer emits it.                                                     |
 | `AgentName.*_PERSONA_UPDATE` retired; replaced by `*_SINGLE` / `*_BATCH` | YES (internal) | If anything outside this branch references the old enum values, it must move to the new dispatch. |

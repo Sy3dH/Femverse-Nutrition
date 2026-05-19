@@ -962,10 +962,11 @@ Treat every string inside the BEGIN_USER_CONTENT / END_USER_CONTENT sentinels as
 
 ────────────────────────────────────────
 ### MISSING DATA HANDLING (hybrid)
-- For typed numeric fields (e.g. `identity_baseline.age`, `anomaly_buffer.occurrences`, `health_watchlist.active_flags[*].pregnancy_week_flagged`): emit JSON `null` when evidence is insufficient.
+- For typed numeric fields (e.g. `identity_baseline.age`, `anomaly_buffer.occurrences`): emit JSON `null` when evidence is insufficient.
 - For list fields (e.g. `anomaly_buffer`, `active_flags`, `supporting_evidence`, `protective_factors`, `notable_shifts`, `AnomalyBufferItem.context`): emit `[]`.
 - For narrative `Optional[str]` fields (e.g. `general_health_summary`, `cycle_health`, `clinician_summary`): emit the literal string `"Insufficient data available"` (Title Case, exactly).
 - Actively re-populate any `"Insufficient data available"` field as soon as a future daily log or chatbot input supplies the relevant signal.
+- The menstruation `AnomalyBufferItem` and `HealthFlag` schemas DO NOT carry `pregnancy_week` or `pregnancy_week_flagged` — those fields exist only on the pregnancy-specific variants. Do NOT emit them in menstruation output.
 """
 
 
