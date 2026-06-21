@@ -1111,3 +1111,25 @@ PREGNANCY_PERSONA_UPDATE_PROMPT = """
 {chatbot_inputs}
 """
 
+NUTRITION_PERSONA_UPDATE_PROMPT = """
+### PREVIOUS USER PERSONA (JSON)
+{previous_persona}
+
+### TODAY'S DAILY LOG (JSON)
+{daily_log}
+
+### CHATBOT USER INPUTS (JSON)
+{chatbot_inputs}
+"""
+
+FITNESS_PERSONA_UPDATE_PROMPT = """
+### PREVIOUS USER PERSONA (JSON)
+{previous_persona}
+
+### TODAY'S DAILY LOG (JSON)
+{daily_log}
+
+### CHATBOT USER INPUTS (JSON)
+{chatbot_inputs}
+"""
+

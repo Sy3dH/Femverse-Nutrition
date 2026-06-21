@@ -6,6 +6,8 @@ from services.ai_service.agents.orchestrator_agent import AgentsOrchestrator
 from services.ai_service.modules.persona.models import (
     MenstruationPersonaUpdateInput,
     PregnancyPersonaUpdateInput,
+    NutritionPersonaUpdateInput,
+    FitnessPersonaUpdateInput,
 )
 from services.ai_service.modules.enums import AgentModuleEnum, AgentName
 
@@ -94,4 +96,88 @@ async def update_pregnancy_persona(
         raise
     except Exception as e:
         logger.exception(f"Unexpected error in update_pregnancy_persona for user {user_id}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+
+@persona_router.post("/nutrition/update")
+async def update_nutrition_persona(
+    body: NutritionPersonaUpdateInput,
+    user_id: Optional[str] = None,
+):
+    """
+    Update a nutrition user persona based on daily log data.
+
+    This endpoint synthesizes daily meal, hydration, digestive, and lifestyle
+    data into a long-term nutritional health narrative, tracking dietary patterns,
+    food-symptom correlations, and nutrition-related health flags over time.
+
+    Args:
+        body: Contains previous_persona and daily_log
+        user_id: Optional user identifier for logging purposes
+
+    Returns:
+        Updated persona JSON with synthesized nutritional patterns
+    """
+    try:
+        direct_inputs = body
+
+        result, error = await orchestrator.run_agents_for_module(
+            module=AgentModuleEnum.PERSONA.value,
+            agent=AgentName.NUTRITION_PERSONA_UPDATE.value,
+            user_id=user_id,
+            direct_inputs=direct_inputs,
+        )
+
+        if error:
+            logger.error(f"Nutrition persona update failed for user {user_id}: {error}")
+            raise HTTPException(status_code=400, detail=f"Failed to update persona: {error}")
+
+        return result
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception(f"Unexpected error in update_nutrition_persona for user {user_id}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+
+@persona_router.post("/fitness/update")
+async def update_fitness_persona(
+    body: FitnessPersonaUpdateInput,
+    user_id: Optional[str] = None,
+):
+    """
+    Update a fitness user persona based on daily log data.
+
+    This endpoint synthesizes daily workout, recovery, sleep, and lifestyle
+    data into a long-term fitness health narrative, tracking training patterns,
+    recovery baselines, and fitness-related health flags over time.
+
+    Args:
+        body: Contains previous_persona and daily_log
+        user_id: Optional user identifier for logging purposes
+
+    Returns:
+        Updated persona JSON with synthesized fitness patterns
+    """
+    try:
+        direct_inputs = body
+
+        result, error = await orchestrator.run_agents_for_module(
+            module=AgentModuleEnum.PERSONA.value,
+            agent=AgentName.FITNESS_PERSONA_UPDATE.value,
+            user_id=user_id,
+            direct_inputs=direct_inputs,
+        )
+
+        if error:
+            logger.error(f"Fitness persona update failed for user {user_id}: {error}")
+            raise HTTPException(status_code=400, detail=f"Failed to update persona: {error}")
+
+        return result
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception(f"Unexpected error in update_fitness_persona for user {user_id}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")

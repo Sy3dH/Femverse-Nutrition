@@ -9,6 +9,8 @@ class AgentName(Enum):
     NUTRITION_INSIGHTS = "nutrition-insights"
     MENSTRUATION_PERSONA_UPDATE = "menstruation-persona-update"
     PREGNANCY_PERSONA_UPDATE = "pregnancy-persona-update"
+    NUTRITION_PERSONA_UPDATE = "nutrition-persona-update"
+    FITNESS_PERSONA_UPDATE = "fitness-persona-update"
 
 
 class PlanType(Enum):

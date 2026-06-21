@@ -8,13 +8,20 @@ from services.ai_service.agents.logging.nutrition_image_logging_agent import Nut
 from services.ai_service.agents.logging.nutrition_image_label_logging_agent import NutritionLabelImageLoggingAgent
 from services.ai_service.agents.persona.menstruation_persona_agent import MenstruationPersonaAgent
 from services.ai_service.agents.persona.pregnancy_persona_agent import PregnancyPersonaAgent
+from services.ai_service.agents.persona.nutrition_persona_agent import NutritionPersonaAgent
+from services.ai_service.agents.persona.fitness_persona_agent import FitnessPersonaAgent
 from services.ai_service.modules.enums import AgentName, AgentModuleEnum
 from services.ai_service.modules.nutrition.models import NutritionInputs
 from services.ai_service.modules.logging.models import (TextFoodLogInput, ImageFoodLogInput, InsightsInputs,
                                                        )
 from services.ai_service.resolvers.nutrition_resolver import NutritionInputResolver
 from services.ai_service.utils.system_prompts import AGENT_SYSTEM_PROMPTS
-from services.ai_service.modules.persona.models import MenstruationPersonaUpdateInput, PregnancyPersonaUpdateInput
+from services.ai_service.modules.persona.models import (
+    MenstruationPersonaUpdateInput,
+    PregnancyPersonaUpdateInput,
+    NutritionPersonaUpdateInput,
+    FitnessPersonaUpdateInput,
+)
 
 logger = logging.getLogger("celery")
 
@@ -53,6 +60,14 @@ class AgentsOrchestrator:
                     "agent": PregnancyPersonaAgent(llm_service=self.llm_service),
                     "resolver": None,  # Direct inputs only
                 },
+                AgentName.NUTRITION_PERSONA_UPDATE.value: {
+                    "agent": NutritionPersonaAgent(llm_service=self.llm_service),
+                    "resolver": None,  # Direct inputs only
+                },
+                AgentName.FITNESS_PERSONA_UPDATE.value: {
+                    "agent": FitnessPersonaAgent(llm_service=self.llm_service),
+                    "resolver": None,  # Direct inputs only
+                },
             }
         }
 
@@ -83,7 +98,7 @@ class AgentsOrchestrator:
             agent: str,
             user_id: Optional[str] = None,
             date: Optional[int] = None,
-            direct_inputs: Optional[Union[NutritionInputs, InsightsInputs,TextFoodLogInput, ImageFoodLogInput, MenstruationPersonaUpdateInput, PregnancyPersonaUpdateInput]] = None,
+            direct_inputs: Optional[Union[NutritionInputs, InsightsInputs, TextFoodLogInput, ImageFoodLogInput, MenstruationPersonaUpdateInput, PregnancyPersonaUpdateInput, NutritionPersonaUpdateInput, FitnessPersonaUpdateInput]] = None,
     ) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
 
         if module not in self.registry:
